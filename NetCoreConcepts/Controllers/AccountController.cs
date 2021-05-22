@@ -29,7 +29,7 @@ namespace NetCoreConcepts.Controllers
             if (!(request.Username == "admin" && request.Password == "Admin@123"))
             {
                 response.Add("Error", "Invalid username or password");
-                return BadRequest(response);
+                return Ok(response);
             }
 
             var roles = new string[] { "Role1", "Role2" };
