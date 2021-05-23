@@ -126,7 +126,7 @@ namespace NetCoreConcepts.Controllers
             try
             {
                 dal.ModificarCiudad(ciudadRequest);
-                ciudadList = await Task.Run(() => dal.ObtenerCiudades(ciudadRequest.ciudad_id.ToString()));
+                ciudadList = await Task.Run(() => dal.ObtenerCiudades(ciudadRequest.pais_id.ToString()));
                 return JsonConvert.SerializeObject(ciudadList);
 
             }
@@ -160,14 +160,14 @@ namespace NetCoreConcepts.Controllers
     [Authorize()]
     [HttpDelete]
     [Route("Countries/EliminarCiudad")]
-    public async Task<string> EliminarCiudad(string ciudad_id)
+    public async Task<string> EliminarCiudad(string ciudad_id,string pais_id)
     {
         PaisesDal dal = new PaisesDal(_config);
         List<CiudadesModel> ciudadList = new List<CiudadesModel>();
         try
         {
             dal.EliminarCiudad(ciudad_id);
-                ciudadList = await Task.Run(() => dal.ObtenerCiudades(ciudad_id));
+                ciudadList = await Task.Run(() => dal.ObtenerCiudades(pais_id));
             return JsonConvert.SerializeObject(ciudadList);
 
         }

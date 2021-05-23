@@ -112,7 +112,7 @@ namespace NetCoreConcepts.Dal
                 cmd.CommandText = "INSERT INTO `bdPaises`.`Ciudades` (`pais_id`, `nombre_ciudad`, `poblacion`, `region`) VALUES (?pais_id, ?nombre_ciudad, ?poblacion, ?region);";
 
                 cmd.Parameters.Add("?pais_id", MySqlDbType.VarChar).Value = ciudadRequest.pais_id;
-                cmd.Parameters.Add("?nombre_pais", MySqlDbType.VarChar).Value = ciudadRequest.nombre_ciudad;
+                cmd.Parameters.Add("?nombre_ciudad", MySqlDbType.VarChar).Value = ciudadRequest.nombre_ciudad;
                 cmd.Parameters.Add("?poblacion", MySqlDbType.VarChar).Value = ciudadRequest.poblacion;
                 cmd.Parameters.Add("?region", MySqlDbType.VarChar).Value = ciudadRequest.region;
 
