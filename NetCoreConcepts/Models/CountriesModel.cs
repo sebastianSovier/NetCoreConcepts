@@ -20,4 +20,12 @@ namespace NetCoreConcepts.Models
         public string region { get; set; }
         public string poblacion { get; set; }
     }
+    public class CiudadesModel
+    {
+        public Int64 ciudad_id { get; set; }
+        public Int64 pais_id { get; set; }
+        public string nombre_ciudad { get; set; }
+        public string region { get; set; }
+        public string poblacion { get; set; }
+    }
 }

@@ -51,6 +51,36 @@ namespace NetCoreConcepts.Dal
                 return listPaises;
             }
         }
+        public List<CiudadesModel> ObtenerCiudades(string pais_id)
+        {
+            using (MySqlConnection conexion = new MySqlConnection(_config.GetValue<string>("Data:ConnectionStrings:DefaultConnection")))
+            {
+                List<CiudadesModel> listaCiudades = new List<CiudadesModel>();
+                conexion.Open();
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.Connection = conexion;
+                cmd.CommandText = $"select ciudad_id,pais_id,nombre_ciudad,poblacion,region,fecha_registro from Ciudades where pais_id = ?pais_id order by pais_id;";
+                cmd.Parameters.Add("?pais_id", MySqlDbType.Int32).Value = pais_id;
+
+
+                using (var reader = cmd.ExecuteReader())
+                {
+
+                    while (reader.Read())
+                    {
+                        CiudadesModel paises = new CiudadesModel();
+                        paises.ciudad_id = Convert.ToInt32(reader["ciudad_id"]);
+                        paises.pais_id = Convert.ToInt32(reader["pais_id"]);
+                        paises.nombre_ciudad = reader["nombre_ciudad"].ToString();
+                        paises.region = reader["region"].ToString();
+                        paises.poblacion = reader["poblacion"].ToString();
+                        listaCiudades.Add(paises);
+
+                    }
+                }
+                return listaCiudades;
+            }
+        }
 
         public void InsertarPaises(PaisesModel paisRequest) {
 
@@ -66,6 +96,25 @@ namespace NetCoreConcepts.Dal
                 cmd.Parameters.Add("?capital", MySqlDbType.VarChar).Value = paisRequest.capital;
                 cmd.Parameters.Add("?region", MySqlDbType.VarChar).Value = paisRequest.region;
                 cmd.Parameters.Add("?poblacion", MySqlDbType.VarChar).Value = paisRequest.poblacion;
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+        public void InsertarCiudad(CiudadesModel ciudadRequest)
+        {
+
+            using (MySqlConnection conexion = new MySqlConnection(_config.GetValue<string>("Data:ConnectionStrings:DefaultConnection")))
+            {
+                conexion.Open();
+
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.Connection = conexion;
+                cmd.CommandText = "INSERT INTO `bdPaises`.`Ciudades` (`pais_id`, `nombre_ciudad`, `poblacion`, `region`) VALUES (?pais_id, ?nombre_ciudad, ?poblacion, ?region);";
+
+                cmd.Parameters.Add("?pais_id", MySqlDbType.VarChar).Value = ciudadRequest.pais_id;
+                cmd.Parameters.Add("?nombre_pais", MySqlDbType.VarChar).Value = ciudadRequest.nombre_ciudad;
+                cmd.Parameters.Add("?poblacion", MySqlDbType.VarChar).Value = ciudadRequest.poblacion;
+                cmd.Parameters.Add("?region", MySqlDbType.VarChar).Value = ciudadRequest.region;
 
                 cmd.ExecuteNonQuery();
             }
@@ -91,6 +140,25 @@ namespace NetCoreConcepts.Dal
                 cmd.ExecuteNonQuery();
             }
         }
+        public void ModificarCiudad(CiudadesModel ciudadRequest)
+        {
+
+            using (MySqlConnection conexion = new MySqlConnection(_config.GetValue<string>("Data:ConnectionStrings:DefaultConnection")))
+            {
+                conexion.Open();
+
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.Connection = conexion;
+                cmd.CommandText = "UPDATE `bdPaises`.`Ciudades` set nombre_ciudad = ?nombre_ciudad, region = ?region, poblacion = ?poblacion where ciudad_id = ?ciudad_id";
+
+                cmd.Parameters.Add("?nombre_ciudad", MySqlDbType.VarChar).Value = ciudadRequest.nombre_ciudad;
+                cmd.Parameters.Add("?region", MySqlDbType.VarChar).Value = ciudadRequest.region;
+                cmd.Parameters.Add("?poblacion", MySqlDbType.VarChar).Value = ciudadRequest.poblacion;
+                cmd.Parameters.Add("?ciudad_id", MySqlDbType.VarChar).Value = ciudadRequest.ciudad_id;
+
+                cmd.ExecuteNonQuery();
+            }
+        }
         public void EliminarPais(string pais_id)
         {
 
@@ -103,6 +171,22 @@ namespace NetCoreConcepts.Dal
                 cmd.CommandText = "Delete from `bdPaises`.`Paises` where pais_id = ?pais_id ";
 
                 cmd.Parameters.Add("?pais_id", MySqlDbType.VarChar).Value = pais_id;
+
+                cmd.ExecuteNonQuery();
+            }
+        }
+        public void EliminarCiudad(string ciudad_id)
+        {
+
+            using (MySqlConnection conexion = new MySqlConnection(_config.GetValue<string>("Data:ConnectionStrings:DefaultConnection")))
+            {
+                conexion.Open();
+
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.Connection = conexion;
+                cmd.CommandText = "Delete from `bdPaises`.`Ciudades` where ciudad_id = ?ciudad_id ";
+
+                cmd.Parameters.Add("?ciudad_id", MySqlDbType.VarChar).Value = ciudad_id;
 
                 cmd.ExecuteNonQuery();
             }
