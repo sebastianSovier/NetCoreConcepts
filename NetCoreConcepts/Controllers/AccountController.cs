@@ -20,7 +20,8 @@ namespace NetCoreConcepts.Controllers
     public class AccountController : Controller
     {
         private readonly IConfiguration _config;
-
+        
+        UtilidadesApiss utils = new UtilidadesApiss();
         public AccountController(IConfiguration config)
         {
             _config = config;
@@ -29,8 +30,19 @@ namespace NetCoreConcepts.Controllers
         [Route("Account/Login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
+            UsuarioDal usuarioDal = new UsuarioDal(_config);
             var response = new Dictionary<string, string>();
-            if (!(request.Username == "admin" && request.Password == "Admin@123"))
+            UsuarioModels usuario = new UsuarioModels();
+            try
+            {
+                usuario = usuarioDal.ObtenerUsuario(request.Username);
+            }
+            catch (Exception)
+            {
+                response.Add("Error", "Hubo un problema al validar usuario.");
+                return Ok(response);
+            }
+            if (!(request.Username == usuario.usuario && request.Password == utils.Decrypt(usuario.contrasena)))
             {
                 response.Add("Error", "Invalid username or password");
                 return Ok(response);
@@ -98,14 +110,20 @@ namespace NetCoreConcepts.Controllers
             UsuarioDal dal = new UsuarioDal(_config);
             UtilidadesApiss util = new UtilidadesApiss();
             usuarioRequest.contrasena = util.Encrypt(usuarioRequest.contrasena);
-            List<UsuarioModels> usuarioList = new List<UsuarioModels>();
+           /* List<UsuarioModels> usuarioList = new List<UsuarioModels>();*/
+            UsuarioModels usuario = new UsuarioModels();
+            
             try
             {
-                
-                dal.CrearUsuario(usuarioRequest);
-                usuarioList = await Task.Run(() => dal.ObtenerUsuarios());
-                return JsonConvert.SerializeObject(usuarioList);
-
+                usuario =dal.ObtenerUsuario(usuarioRequest.usuario);
+                if(usuario.nombre_completo == null) {
+                    await Task.Run(() => dal.CrearUsuario(usuarioRequest));
+                    return JsonConvert.SerializeObject("ok");
+                }
+                else
+                {
+                    return JsonConvert.SerializeObject("usuario existe");
+                }
             }
             catch (Exception ex)
             {
