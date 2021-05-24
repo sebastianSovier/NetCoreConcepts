@@ -20,4 +20,13 @@ namespace NetCoreConcepts.Models
 
         }
     }
+    public class UsuarioModels { 
+        
+        public Int64 usuario_id { get; set; }
+        public string usuario { get; set; }
+        public string contrasena { get; set; }
+        public string nombre_completo { get; set; }
+        public string correo { get; set; }
+    
+    }
 }

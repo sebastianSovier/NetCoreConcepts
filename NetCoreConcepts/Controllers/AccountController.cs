@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using NetCoreConcepts.Dal;
+using NetCoreConcepts.UtilidadesApi;
+using NetCoreConcepts.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -15,11 +19,11 @@ namespace NetCoreConcepts.Controllers
     [ApiController]
     public class AccountController : Controller
     {
-        private readonly IConfiguration _configuration;
+        private readonly IConfiguration _config;
 
-        public AccountController(IConfiguration configuration)
+        public AccountController(IConfiguration config)
         {
-            _configuration = configuration;
+            _config = config;
         }
         [HttpPost]
         [Route("Account/Login")]
@@ -55,19 +59,58 @@ namespace NetCoreConcepts.Controllers
                 claims.Add(new Claim(ClaimTypes.Role, role));
             });
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["JwtExpireDays"]));
+            var expires = DateTime.Now.AddDays(Convert.ToDouble(_config["JwtExpireDays"]));
 
             var token = new JwtSecurityToken(
-                _configuration["JwtIssuer"],
-                _configuration["JwtIssuer"],
+                _config["JwtIssuer"],
+                _config["JwtIssuer"],
                 claims,
                 expires: expires,
                 signingCredentials: creds
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+        [HttpGet]
+        [Route("Account/ObtenerUsuarios")]
+        public async Task<string> ObtenerUsuarios()
+        {
+            UsuarioDal dal = new UsuarioDal(_config);
+            List<UsuarioModels> usuarioList = new List<UsuarioModels>();
+            try
+            {
+
+                usuarioList = await Task.Run(() => dal.ObtenerUsuarios());
+                return JsonConvert.SerializeObject(usuarioList);
+
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject("99");
+            }
+        }
+        [HttpPost]
+        [Route("Account/IngresarUsuario")]
+        public async Task<string> IngresarUsuario(UsuarioModels usuarioRequest)
+        {
+            UsuarioDal dal = new UsuarioDal(_config);
+            UtilidadesApiss util = new UtilidadesApiss();
+            usuarioRequest.contrasena = util.Encrypt(usuarioRequest.contrasena);
+            List<UsuarioModels> usuarioList = new List<UsuarioModels>();
+            try
+            {
+                
+                dal.CrearUsuario(usuarioRequest);
+                usuarioList = await Task.Run(() => dal.ObtenerUsuarios());
+                return JsonConvert.SerializeObject(usuarioList);
+
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject("99");
+            }
         }
     }
 }
