@@ -59,7 +59,7 @@ namespace NetCoreConcepts.Dal
                 conexion.Open();
                 MySqlCommand cmd = new MySqlCommand();
                 cmd.Connection = conexion;
-                cmd.CommandText = $"select ciudad_id,pais_id,nombre_ciudad,poblacion,region,fecha_registro from Ciudades where pais_id = ?pais_id order by pais_id;";
+                cmd.CommandText = $"select ciudad_id,pais_id,nombre_ciudad,poblacion,region,fecha_registro,latitud,longitud from Ciudades where pais_id = ?pais_id order by pais_id;";
                 cmd.Parameters.Add("?pais_id", MySqlDbType.Int32).Value = pais_id;
 
 
@@ -74,6 +74,8 @@ namespace NetCoreConcepts.Dal
                         paises.nombre_ciudad = reader["nombre_ciudad"].ToString();
                         paises.region = reader["region"].ToString();
                         paises.poblacion = reader["poblacion"].ToString();
+                        paises.latitud = reader["latitud"].ToString();
+                        paises.longitud = reader["longitud"].ToString();
                         listaCiudades.Add(paises);
 
                     }
@@ -109,12 +111,14 @@ namespace NetCoreConcepts.Dal
 
                 MySqlCommand cmd = new MySqlCommand();
                 cmd.Connection = conexion;
-                cmd.CommandText = "INSERT INTO `bdPaises`.`Ciudades` (`pais_id`, `nombre_ciudad`, `poblacion`, `region`) VALUES (?pais_id, ?nombre_ciudad, ?poblacion, ?region);";
+                cmd.CommandText = "INSERT INTO `bdPaises`.`Ciudades` (`pais_id`, `nombre_ciudad`, `poblacion`, `region`, `latitud`, `longitud`) VALUES (?pais_id, ?nombre_ciudad, ?poblacion, ?region, ?latitud, ?longitud);";
 
                 cmd.Parameters.Add("?pais_id", MySqlDbType.VarChar).Value = ciudadRequest.pais_id;
                 cmd.Parameters.Add("?nombre_ciudad", MySqlDbType.VarChar).Value = ciudadRequest.nombre_ciudad;
                 cmd.Parameters.Add("?poblacion", MySqlDbType.VarChar).Value = ciudadRequest.poblacion;
                 cmd.Parameters.Add("?region", MySqlDbType.VarChar).Value = ciudadRequest.region;
+                cmd.Parameters.Add("?latitud", MySqlDbType.VarChar).Value = ciudadRequest.latitud;
+                cmd.Parameters.Add("?longitud", MySqlDbType.VarChar).Value = ciudadRequest.longitud;
 
                 cmd.ExecuteNonQuery();
             }
@@ -149,12 +153,14 @@ namespace NetCoreConcepts.Dal
 
                 MySqlCommand cmd = new MySqlCommand();
                 cmd.Connection = conexion;
-                cmd.CommandText = "UPDATE `bdPaises`.`Ciudades` set nombre_ciudad = ?nombre_ciudad, region = ?region, poblacion = ?poblacion where ciudad_id = ?ciudad_id";
+                cmd.CommandText = "UPDATE `bdPaises`.`Ciudades` set nombre_ciudad = ?nombre_ciudad, region = ?region, poblacion = ?poblacion, latitud = ?latitud, longitud = ?longitud where ciudad_id = ?ciudad_id";
 
                 cmd.Parameters.Add("?nombre_ciudad", MySqlDbType.VarChar).Value = ciudadRequest.nombre_ciudad;
                 cmd.Parameters.Add("?region", MySqlDbType.VarChar).Value = ciudadRequest.region;
                 cmd.Parameters.Add("?poblacion", MySqlDbType.VarChar).Value = ciudadRequest.poblacion;
                 cmd.Parameters.Add("?ciudad_id", MySqlDbType.VarChar).Value = ciudadRequest.ciudad_id;
+                cmd.Parameters.Add("?latitud", MySqlDbType.VarChar).Value = ciudadRequest.latitud;
+                cmd.Parameters.Add("?longitud", MySqlDbType.VarChar).Value = ciudadRequest.longitud;
 
                 cmd.ExecuteNonQuery();
             }

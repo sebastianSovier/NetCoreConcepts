@@ -37,7 +37,7 @@ namespace NetCoreConcepts.Controllers
             {
                 usuario = usuarioDal.ObtenerUsuario(request.Username);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 response.Add("Error", "Hubo un problema al validar usuario.");
                 return Ok(response);

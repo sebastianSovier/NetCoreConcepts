@@ -27,5 +27,7 @@ namespace NetCoreConcepts.Models
         public string nombre_ciudad { get; set; }
         public string region { get; set; }
         public string poblacion { get; set; }
+        public string latitud { get; set; }
+        public string longitud { get; set; }
     }
 }
