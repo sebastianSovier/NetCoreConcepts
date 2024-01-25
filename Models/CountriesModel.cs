@@ -26,4 +26,10 @@ namespace NetCoreConcepts.Models
         public string? latitud { get; set; }
         public string? longitud { get; set; }
     }
+    public class UsuarioRequest
+    {
+        public string? usuario { get; set;}
+        public string? fecha_desde { get; set; }
+        public string? fecha_hasta { get; set; }
+    }
 }

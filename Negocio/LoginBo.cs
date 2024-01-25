@@ -19,14 +19,14 @@ namespace Negocio
         public LoginBo() { }
 
 
-        public UsuarioModels ObtenerUsuario(LoginRequest request)
+        public UsuarioModels ObtenerUsuario(string userName)
         {
             try
             {
                 UsuarioModels usuario = new UsuarioModels();
                 UsuarioDal usuarioDal = new UsuarioDal(_config);
 
-                usuario = usuarioDal.ObtenerUsuario(request.Username!);
+                usuario = usuarioDal.ObtenerUsuario(userName);
 
                 return usuario;
             }

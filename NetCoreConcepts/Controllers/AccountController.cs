@@ -33,7 +33,7 @@ namespace NetCoreConcepts.Controllers
             try
             {
 
-                usuario = Login.ObtenerUsuario(request);
+                usuario = Login.ObtenerUsuario(request.Username);
 
                 if (!(request.Username == usuario.usuario && utils.ComparePassword(request.Password,usuario.contrasena)))
             {

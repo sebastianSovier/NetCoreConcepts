@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using NetCoreConcepts.Models;
+using System.Data;
+
 namespace NetCoreConcepts.Dal
 {
     public class PaisesDal
@@ -12,7 +14,7 @@ namespace NetCoreConcepts.Dal
             _config = config;
         }
 
-        public List<PaisesModel> ObtenerPaises()
+        public List<PaisesModel> ObtenerPaises(Int64 usuario_id)
         {   
             using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
             {
@@ -20,10 +22,11 @@ namespace NetCoreConcepts.Dal
                 conexion.Open();
                 MySqlCommand cmd = new MySqlCommand();
                 cmd.Connection = conexion;
-                cmd.CommandText = $"select pais_id,nombre_pais,capital,region,poblacion,fecha_registro from Paises order by pais_id;";
-                /*cmd.Parameters.Add("?articuloId", MySqlDbType.Int32).Value = articuloId;*/
+                cmd.CommandText = "p_listar_paises";
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@p_usuario_id", usuario_id);
+                cmd.Parameters["@p_usuario_id"].Direction = ParameterDirection.Input;
 
-                
                 using (var reader = cmd.ExecuteReader())
                 {
                     
@@ -37,6 +40,42 @@ namespace NetCoreConcepts.Dal
                         paises.poblacion = reader["poblacion"].ToString();
                         listPaises.Add(paises);
                        
+                    }
+                }
+                return listPaises;
+            }
+        }
+        public List<PaisesModel> ObtenerPaisesPorFecha(string? fecha_desde,string? fecha_hasta,Int64 usuario_id)
+        {
+            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
+            {
+                List<PaisesModel> listPaises = new List<PaisesModel>();
+                conexion.Open();
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.Connection = conexion;
+                cmd.CommandText = "p_buscar_paises";
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@p_fecha_desde", fecha_desde);
+                cmd.Parameters.AddWithValue("@p_fecha_hasta", fecha_hasta);
+                cmd.Parameters.AddWithValue("@p_usuario_id", usuario_id);
+
+                cmd.Parameters["@p_fecha_desde"].Direction = ParameterDirection.Input;
+                cmd.Parameters["@p_fecha_hasta"].Direction = ParameterDirection.Input;
+                cmd.Parameters["@p_usuario_id"].Direction = ParameterDirection.Input;
+
+                using (var reader = cmd.ExecuteReader())
+                {
+
+                    while (reader.Read())
+                    {
+                        PaisesModel paises = new PaisesModel();
+                        paises.pais_id = Convert.ToInt32(reader["pais_id"]);
+                        paises.nombre_pais = reader["nombre_pais"].ToString();
+                        paises.capital = reader["capital"].ToString();
+                        paises.region = reader["region"].ToString();
+                        paises.poblacion = reader["poblacion"].ToString();
+                        listPaises.Add(paises);
+
                     }
                 }
                 return listPaises;

@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using NetCoreConcepts.Bo;
 using NetCoreConcepts.Dal;
 using NetCoreConcepts.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static NetCoreConcepts.Models.LoginModels;
 
 namespace NetCoreConcepts.Controllers
 {
@@ -21,20 +23,63 @@ namespace NetCoreConcepts.Controllers
         }
 
         [Authorize()]
-        [HttpGet]
+        [HttpPost]
         [Route("Countries/TodosLosPaises")]
-        public async Task<string> TodosLosPaises()
+        public IActionResult TodosLosPaises(UsuarioRequest request)
         {
-            PaisesDal dal = new PaisesDal(_config);
+            PaisesBo bo = new PaisesBo(_config);
+            var response = new Dictionary<string, string>();
             List<PaisesModel> countriesList = new List<PaisesModel>();
             try
             {
-                countriesList = await Task.Run(() => dal.ObtenerPaises());
-                return JsonConvert.SerializeObject(countriesList);
+                countriesList = bo.ObtenerPaises(request);
+                return Ok(JsonConvert.SerializeObject(countriesList));
 
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-                return JsonConvert.SerializeObject("99");
+                response.Add("Error", "Hubo un problema.");
+                return StatusCode(500, response);
+            }
+        }
+        [Authorize()]
+        [HttpPost]
+        [Route("Countries/ObtenerPaisesPorFechas")]
+        public IActionResult ObtenerPaisesPorFechas(UsuarioRequest request)
+        {
+            PaisesBo bo = new PaisesBo(_config);
+            var response = new Dictionary<string, string>();
+            List<PaisesModel> countriesList = new List<PaisesModel>();
+            try
+            {
+                countriesList = bo.ObtenerPaisesPorFechas(request);
+                return Ok(JsonConvert.SerializeObject(countriesList));
+
+            }
+            catch (Exception ex)
+            {
+                response.Add("Error", "Hubo un problema.");
+                return StatusCode(500, response);
+            }
+        }
+        [Authorize()]
+        [HttpPost]
+        [Route("Countries/GetExcelPaises")]
+        public IActionResult GetExcelPaises(UsuarioRequest request)
+        {
+            PaisesBo bo = new PaisesBo(_config);
+            var response = new Dictionary<string, string>();
+            List<PaisesModel> countriesList = new List<PaisesModel>();
+            try
+            {
+                countriesList = bo.ObtenerPaises(request);
+                return Ok(JsonConvert.SerializeObject(countriesList));
+
+            }
+            catch (Exception ex)
+            {
+                response.Add("Error", "Hubo un problema.");
+                return StatusCode(500, response);
             }
         }
         [Authorize()]
@@ -85,7 +130,7 @@ namespace NetCoreConcepts.Controllers
             try
             {
                 dal.InsertarPaises(paisRequest);
-                countriesList = await Task.Run(() => dal.ObtenerPaises());
+                countriesList = await Task.Run(() => dal.ObtenerPaises(paisRequest.pais_id));
                 return JsonConvert.SerializeObject(countriesList);
 
             }
@@ -104,7 +149,7 @@ namespace NetCoreConcepts.Controllers
             try
             {
                 dal.ModificarPais(paisRequest);
-                countriesList = await Task.Run(() => dal.ObtenerPaises());
+                countriesList = await Task.Run(() => dal.ObtenerPaises(paisRequest.pais_id));
                 return JsonConvert.SerializeObject(countriesList);
 
             }
@@ -143,7 +188,7 @@ namespace NetCoreConcepts.Controllers
             try
                 {
                     dal.EliminarPais(pais_id);
-                    countriesList = await Task.Run(() => dal.ObtenerPaises()); 
+                    countriesList = await Task.Run(() => dal.ObtenerPaises(1)); 
                     return JsonConvert.SerializeObject(countriesList);
 
                 }
