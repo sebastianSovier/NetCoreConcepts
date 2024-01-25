@@ -1,21 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using NetCoreConcepts.Models;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace NetCoreConcepts.Dal
 {
     public class PaisesDal
     {
         private readonly IConfiguration _config;
 
-        public PaisesDal()
-        {
-        }
         public PaisesDal(IConfiguration config)
         {
             _config = config;
@@ -23,7 +14,7 @@ namespace NetCoreConcepts.Dal
 
         public List<PaisesModel> ObtenerPaises()
         {   
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetValue<string>("Data:ConnectionStrings:DefaultConnection")))
+            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
             {
                 List<PaisesModel> listPaises = new List<PaisesModel>();
                 conexion.Open();
@@ -53,7 +44,7 @@ namespace NetCoreConcepts.Dal
         }
         public List<CiudadesModel> ObtenerCiudades(string pais_id)
         {
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetValue<string>("Data:ConnectionStrings:DefaultConnection")))
+            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
             {
                 List<CiudadesModel> listaCiudades = new List<CiudadesModel>();
                 conexion.Open();
@@ -86,7 +77,7 @@ namespace NetCoreConcepts.Dal
 
         public void InsertarPaises(PaisesModel paisRequest) {
 
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetValue<string>("Data:ConnectionStrings:DefaultConnection")))
+            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
             {
                 conexion.Open();
 
@@ -105,7 +96,7 @@ namespace NetCoreConcepts.Dal
         public void InsertarCiudad(CiudadesModel ciudadRequest)
         {
 
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetValue<string>("Data:ConnectionStrings:DefaultConnection")))
+            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
             {
                 conexion.Open();
 
@@ -127,7 +118,7 @@ namespace NetCoreConcepts.Dal
         public void ModificarPais(PaisesModel paisRequest)
         {
 
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetValue<string>("Data:ConnectionStrings:DefaultConnection")))
+            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
             {
                 conexion.Open();
 
@@ -147,7 +138,7 @@ namespace NetCoreConcepts.Dal
         public void ModificarCiudad(CiudadesModel ciudadRequest)
         {
 
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetValue<string>("Data:ConnectionStrings:DefaultConnection")))
+            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
             {
                 conexion.Open();
 
@@ -168,7 +159,7 @@ namespace NetCoreConcepts.Dal
         public void EliminarPais(string pais_id)
         {
 
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetValue<string>("Data:ConnectionStrings:DefaultConnection")))
+            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
             {
                 conexion.Open();
 
@@ -184,7 +175,7 @@ namespace NetCoreConcepts.Dal
         public void EliminarCiudad(string ciudad_id)
         {
 
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetValue<string>("Data:ConnectionStrings:DefaultConnection")))
+            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
             {
                 conexion.Open();
 

@@ -1,18 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using NetCoreConcepts.Dal;
 using NetCoreConcepts.UtilidadesApi;
 using NetCoreConcepts.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using static NetCoreConcepts.Models.LoginModels;
+using NetCoreConcepts.Dal;
+using Negocio;
 
 namespace NetCoreConcepts.Controllers
 {
@@ -28,63 +25,39 @@ namespace NetCoreConcepts.Controllers
         }
         [HttpPost]
         [Route("Account/Login")]
-        public IActionResult Login([FromBody] LoginRequest request)
+        public IActionResult Login(LoginRequest request)
         {
-            UsuarioDal usuarioDal = new UsuarioDal(_config);
+            LoginBo Login = new LoginBo(_config);
             var response = new Dictionary<string, string>();
             UsuarioModels usuario = new UsuarioModels();
             try
             {
-                usuario = usuarioDal.ObtenerUsuario(request.Username);
+
+                usuario = Login.ObtenerUsuario(request);
+
+                if (!(request.Username == usuario.usuario && utils.ComparePassword(request.Password,usuario.contrasena)))
+            {
+                response.Add("Error", "Invalid username or password");
+                return StatusCode(403,response);
+            }
+
+            var token = utils.GenerateJwtToken(request.Username, _config);
+            return Ok(new LoginResponse()
+            {
+                access_Token = token,
+                auth = true,
+                id = usuario.usuario_id
+
+            });
             }
             catch (Exception ex)
             {
                 response.Add("Error", "Hubo un problema al validar usuario.");
-                return Ok(response);
+                return StatusCode(500,response);
             }
-            if (!(request.Username == usuario.usuario && request.Password == utils.Decrypt(usuario.contrasena)))
-            {
-                response.Add("Error", "Invalid username or password");
-                return Ok(response);
-            }
-
-            var roles = new string[] { "Role1", "Role2" };
-            var token = GenerateJwtToken(request.Username, roles.ToList());
-            return Ok(new LoginResponse()
-            {
-                Access_Token = token,
-                UserName = request.Username
-            });
         }
 
-        private string GenerateJwtToken(string username, List<string> roles)
-        {
-            var claims = new List<Claim>
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, username),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.NameIdentifier, username)
-        };
-
-            roles.ForEach(role =>
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            });
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JwtKey"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(Convert.ToDouble(_config["JwtExpireDays"]));
-
-            var token = new JwtSecurityToken(
-                _config["JwtIssuer"],
-                _config["JwtIssuer"],
-                claims,
-                expires: expires,
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
-        }
+      
         [HttpGet]
         [Route("Account/ObtenerUsuarios")]
         public async Task<string> ObtenerUsuarios()
@@ -109,9 +82,9 @@ namespace NetCoreConcepts.Controllers
         {
             UsuarioDal dal = new UsuarioDal(_config);
             UtilidadesApiss util = new UtilidadesApiss();
-            usuarioRequest.contrasena = util.Encrypt(usuarioRequest.contrasena);
+            usuarioRequest.contrasena = usuarioRequest.contrasena;
            /* List<UsuarioModels> usuarioList = new List<UsuarioModels>();*/
-            UsuarioModels usuario = new UsuarioModels();
+            UsuarioModels usuario = new();
             
             try
             {

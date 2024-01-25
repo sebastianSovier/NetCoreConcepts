@@ -1,19 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace NetCoreConcepts.Dal
 {
     public class MySqlConexion
     {
             private readonly IConfiguration _config;
-
-            public MySqlConexion()
-            {
-            }
 
             public MySqlConexion(IConfiguration config)
             {
@@ -22,14 +14,14 @@ namespace NetCoreConcepts.Dal
 
             public MySqlConnection getConexion(string ID_CONEXION)
             {
-            MySqlConnection conexion = null;
+            MySqlConnection? conexion = null;
                 try
                 {
 
-                    if (_config.GetValue<string>(ID_CONEXION).ToString() != null)
+                    if (_config.GetConnectionString(ID_CONEXION) != null)
                     {
                         conexion = new MySqlConnection();
-                        conexion.ConnectionString = _config.GetValue<string>(ID_CONEXION);
+                        conexion.ConnectionString = _config.GetConnectionString(ID_CONEXION);
                         conexion.Open();
                     }
                     else

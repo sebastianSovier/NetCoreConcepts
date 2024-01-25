@@ -1,28 +1,23 @@
 ﻿using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
 using NetCoreConcepts.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
-
 namespace NetCoreConcepts.Dal
 {
     public class UsuarioDal
     {
         private readonly IConfiguration _config;
-        public UsuarioDal()
-        {
-        }
+        MySqlConexion mysql = null;
         public UsuarioDal(IConfiguration config)
         {
             _config = config;
+            mysql = new MySqlConexion(_config);
         }
 
         public List<UsuarioModels> ObtenerUsuarios()
-        {
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetValue<string>("Data:ConnectionStrings:DefaultConnection")))
+            
+            {
+            var a = mysql.getConexion("bdpaises");
+            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
             {
                 List<UsuarioModels> listUsuarios = new List<UsuarioModels>();
                 conexion.Open();
@@ -49,37 +44,33 @@ namespace NetCoreConcepts.Dal
         }
         public UsuarioModels ObtenerUsuario(string usuarioRequest)
         {
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetValue<string>("Data:ConnectionStrings:DefaultConnection")))
+            using MySqlConnection conexion = mysql.getConexion("bdpaises");
+            UsuarioModels usuario = new UsuarioModels();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conexion;
+            cmd.CommandText = $"select usuario_id,usuario,contrasena,nombre_completo,correo,fecha_registro from Usuarios where usuario = ?usuario order by usuario_id;";
+            cmd.Parameters.Add("?usuario", MySqlDbType.VarChar).Value = usuarioRequest;
+            using MySqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
             {
-                UsuarioModels usuario = new UsuarioModels();
-                conexion.Open();
-                MySqlCommand cmd = new MySqlCommand();
-                cmd.Connection = conexion;
-                cmd.CommandText = $"select usuario_id,usuario,contrasena,nombre_completo,correo,fecha_registro from Usuarios where usuario = ?usuario order by usuario_id;";
-                cmd.Parameters.Add("?usuario", MySqlDbType.VarChar).Value = usuarioRequest;
-                using (var reader = cmd.ExecuteReader())
-                {
+                UsuarioModels Usuario = new UsuarioModels();
+                Usuario.usuario_id = Convert.ToInt32(reader["usuario_id"]);
+                Usuario.contrasena = reader["contrasena"].ToString();
+                Usuario.usuario = reader["usuario"].ToString();
+                Usuario.nombre_completo = reader["nombre_completo"].ToString();
+                Usuario.correo = reader["correo"].ToString();
+                usuario = Usuario;
 
-                    while (reader.Read())
-                    {
-                        UsuarioModels Usuario = new UsuarioModels();
-                        Usuario.usuario_id = Convert.ToInt32(reader["usuario_id"]);
-                        Usuario.contrasena = reader["contrasena"].ToString();
-                        Usuario.usuario = reader["usuario"].ToString();
-                        Usuario.nombre_completo = reader["nombre_completo"].ToString();
-                        Usuario.correo = reader["correo"].ToString();
-                        usuario = Usuario;
-
-                    }
-                    return usuario;
-                }
             }
+            conexion.Close();
+            return usuario;
         }
 
         public void CrearUsuario(UsuarioModels usuarioRequest)
         {
 
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetValue<string>("Data:ConnectionStrings:DefaultConnection")))
+            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
             {
                 conexion.Open();
 
