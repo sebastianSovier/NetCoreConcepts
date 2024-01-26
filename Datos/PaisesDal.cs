@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI;
 using NetCoreConcepts.Models;
 using System.Data;
 
@@ -8,224 +9,131 @@ namespace NetCoreConcepts.Dal
     public class PaisesDal
     {
         private readonly IConfiguration _config;
-
+        MySqlConexion? mysql = null;
         public PaisesDal(IConfiguration config)
         {
             _config = config;
+            mysql = new MySqlConexion(_config);
         }
 
         public List<PaisesModel> ObtenerPaises(Int64 usuario_id)
-        {   
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
-            {
-                List<PaisesModel> listPaises = new List<PaisesModel>();
-                conexion.Open();
-                MySqlCommand cmd = new MySqlCommand();
-                cmd.Connection = conexion;
-                cmd.CommandText = "p_listar_paises";
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@p_usuario_id", usuario_id);
-                cmd.Parameters["@p_usuario_id"].Direction = ParameterDirection.Input;
-
-                using (var reader = cmd.ExecuteReader())
-                {
-                    
-                    while (reader.Read())
-                    {
-                        PaisesModel paises = new PaisesModel();
-                        paises.pais_id = Convert.ToInt32(reader["pais_id"]);
-                        paises.nombre_pais = reader["nombre_pais"].ToString();
-                        paises.capital = reader["capital"].ToString();
-                        paises.region = reader["region"].ToString();
-                        paises.poblacion = reader["poblacion"].ToString();
-                        listPaises.Add(paises);
-                       
-                    }
-                }
-                return listPaises;
-            }
-        }
-        public List<PaisesModel> ObtenerPaisesPorFecha(string? fecha_desde,string? fecha_hasta,Int64 usuario_id)
         {
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises");
+            List<PaisesModel> listPaises = new List<PaisesModel>();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conexion;
+            cmd.CommandText = "p_listar_paises";
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@p_usuario_id", usuario_id);
+            cmd.Parameters["@p_usuario_id"].Direction = ParameterDirection.Input;
+
+            using MySqlDataReader reader = cmd.ExecuteReader();
+
+
+            while (reader.Read())
             {
-                List<PaisesModel> listPaises = new List<PaisesModel>();
-                conexion.Open();
-                MySqlCommand cmd = new MySqlCommand();
-                cmd.Connection = conexion;
-                cmd.CommandText = "p_buscar_paises";
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@p_fecha_desde", fecha_desde);
-                cmd.Parameters.AddWithValue("@p_fecha_hasta", fecha_hasta);
-                cmd.Parameters.AddWithValue("@p_usuario_id", usuario_id);
+                PaisesModel paises = new PaisesModel();
+                paises.pais_id = Convert.ToInt32(reader["pais_id"]);
+                paises.nombre_pais = reader["nombre_pais"].ToString();
+                paises.capital = reader["capital"].ToString();
+                paises.region = reader["region"].ToString();
+                paises.poblacion = reader["poblacion"].ToString();
+                listPaises.Add(paises);
 
-                cmd.Parameters["@p_fecha_desde"].Direction = ParameterDirection.Input;
-                cmd.Parameters["@p_fecha_hasta"].Direction = ParameterDirection.Input;
-                cmd.Parameters["@p_usuario_id"].Direction = ParameterDirection.Input;
-
-                using (var reader = cmd.ExecuteReader())
-                {
-
-                    while (reader.Read())
-                    {
-                        PaisesModel paises = new PaisesModel();
-                        paises.pais_id = Convert.ToInt32(reader["pais_id"]);
-                        paises.nombre_pais = reader["nombre_pais"].ToString();
-                        paises.capital = reader["capital"].ToString();
-                        paises.region = reader["region"].ToString();
-                        paises.poblacion = reader["poblacion"].ToString();
-                        listPaises.Add(paises);
-
-                    }
-                }
-                return listPaises;
             }
+            conexion.Close();
+            return listPaises;
         }
-        public List<CiudadesModel> ObtenerCiudades(string pais_id)
+        public List<PaisesModel> ObtenerPaisesPorFecha(string? fecha_desde, string? fecha_hasta, Int64 usuario_id)
         {
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises");
+            List<PaisesModel> listPaises = new List<PaisesModel>();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conexion;
+            cmd.CommandText = "p_buscar_paises";
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@p_fecha_desde", fecha_desde);
+            cmd.Parameters.AddWithValue("@p_fecha_hasta", fecha_hasta);
+            cmd.Parameters.AddWithValue("@p_usuario_id", usuario_id);
+
+            cmd.Parameters["@p_fecha_desde"].Direction = ParameterDirection.Input;
+            cmd.Parameters["@p_fecha_hasta"].Direction = ParameterDirection.Input;
+            cmd.Parameters["@p_usuario_id"].Direction = ParameterDirection.Input;
+
+            using MySqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
             {
-                List<CiudadesModel> listaCiudades = new List<CiudadesModel>();
-                conexion.Open();
-                MySqlCommand cmd = new MySqlCommand();
-                cmd.Connection = conexion;
-                cmd.CommandText = $"select ciudad_id,pais_id,nombre_ciudad,poblacion,region,fecha_registro,latitud,longitud from Ciudades where pais_id = ?pais_id order by pais_id;";
-                cmd.Parameters.Add("?pais_id", MySqlDbType.Int32).Value = pais_id;
+                PaisesModel paises = new PaisesModel();
+                paises.pais_id = Convert.ToInt32(reader["pais_id"]);
+                paises.nombre_pais = reader["nombre_pais"].ToString();
+                paises.capital = reader["capital"].ToString();
+                paises.region = reader["region"].ToString();
+                paises.poblacion = reader["poblacion"].ToString();
+                listPaises.Add(paises);
 
-
-                using (var reader = cmd.ExecuteReader())
-                {
-
-                    while (reader.Read())
-                    {
-                        CiudadesModel paises = new CiudadesModel();
-                        paises.ciudad_id = Convert.ToInt32(reader["ciudad_id"]);
-                        paises.pais_id = Convert.ToInt32(reader["pais_id"]);
-                        paises.nombre_ciudad = reader["nombre_ciudad"].ToString();
-                        paises.region = reader["region"].ToString();
-                        paises.poblacion = reader["poblacion"].ToString();
-                        paises.latitud = reader["latitud"].ToString();
-                        paises.longitud = reader["longitud"].ToString();
-                        listaCiudades.Add(paises);
-
-                    }
-                }
-                return listaCiudades;
             }
+            conexion.Close();
+            return listPaises;
+
         }
 
-        public void InsertarPaises(PaisesModel paisRequest) {
 
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
-            {
-                conexion.Open();
-
-                MySqlCommand cmd = new MySqlCommand();
-                cmd.Connection = conexion;
-                cmd.CommandText = "INSERT INTO `bdPaises`.`Paises` (`nombre_pais`, `capital`, `region`, `poblacion`) VALUES (?nombre_pais, ?capital, ?region, ?poblacion);";
-
-                cmd.Parameters.Add("?nombre_pais", MySqlDbType.VarChar).Value = paisRequest.nombre_pais;
-                cmd.Parameters.Add("?capital", MySqlDbType.VarChar).Value = paisRequest.capital;
-                cmd.Parameters.Add("?region", MySqlDbType.VarChar).Value = paisRequest.region;
-                cmd.Parameters.Add("?poblacion", MySqlDbType.VarChar).Value = paisRequest.poblacion;
-
-                cmd.ExecuteNonQuery();
-            }
-        }
-        public void InsertarCiudad(CiudadesModel ciudadRequest)
+        public void InsertarPaises(PaisesModel paisRequest)
         {
 
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
-            {
-                conexion.Open();
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises");
 
-                MySqlCommand cmd = new MySqlCommand();
-                cmd.Connection = conexion;
-                cmd.CommandText = "INSERT INTO `bdPaises`.`Ciudades` (`pais_id`, `nombre_ciudad`, `poblacion`, `region`, `latitud`, `longitud`) VALUES (?pais_id, ?nombre_ciudad, ?poblacion, ?region, ?latitud, ?longitud);";
+            conexion.Open();
 
-                cmd.Parameters.Add("?pais_id", MySqlDbType.VarChar).Value = ciudadRequest.pais_id;
-                cmd.Parameters.Add("?nombre_ciudad", MySqlDbType.VarChar).Value = ciudadRequest.nombre_ciudad;
-                cmd.Parameters.Add("?poblacion", MySqlDbType.VarChar).Value = ciudadRequest.poblacion;
-                cmd.Parameters.Add("?region", MySqlDbType.VarChar).Value = ciudadRequest.region;
-                cmd.Parameters.Add("?latitud", MySqlDbType.VarChar).Value = ciudadRequest.latitud;
-                cmd.Parameters.Add("?longitud", MySqlDbType.VarChar).Value = ciudadRequest.longitud;
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conexion;
+            cmd.CommandText = "INSERT INTO `bdPaises`.`Paises` (`nombre_pais`, `capital`, `region`, `poblacion`) VALUES (?nombre_pais, ?capital, ?region, ?poblacion);";
 
-                cmd.ExecuteNonQuery();
-            }
+            cmd.Parameters.Add("?nombre_pais", MySqlDbType.VarChar).Value = paisRequest.nombre_pais;
+            cmd.Parameters.Add("?capital", MySqlDbType.VarChar).Value = paisRequest.capital;
+            cmd.Parameters.Add("?region", MySqlDbType.VarChar).Value = paisRequest.region;
+            cmd.Parameters.Add("?poblacion", MySqlDbType.VarChar).Value = paisRequest.poblacion;
+
+            cmd.ExecuteNonQuery();
+            conexion.Close();
         }
+
 
         public void ModificarPais(PaisesModel paisRequest)
         {
 
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
-            {
-                conexion.Open();
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises");
+            conexion.Open();
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conexion;
+            cmd.CommandText = "UPDATE `bdPaises`.`Paises` set nombre_pais = ?nombre_pais, capital = ?capital, region = ?region, poblacion = ?poblacion where pais_id = ?pais_id";
+            cmd.Parameters.Add("?pais_id", MySqlDbType.VarChar).Value = paisRequest.pais_id;
+            cmd.Parameters.Add("?nombre_pais", MySqlDbType.VarChar).Value = paisRequest.nombre_pais;
+            cmd.Parameters.Add("?capital", MySqlDbType.VarChar).Value = paisRequest.capital;
+            cmd.Parameters.Add("?region", MySqlDbType.VarChar).Value = paisRequest.region;
+            cmd.Parameters.Add("?poblacion", MySqlDbType.VarChar).Value = paisRequest.poblacion;
 
-                MySqlCommand cmd = new MySqlCommand();
-                cmd.Connection = conexion;
-                cmd.CommandText = "UPDATE `bdPaises`.`Paises` set nombre_pais = ?nombre_pais, capital = ?capital, region = ?region, poblacion = ?poblacion where pais_id = ?pais_id";
+            cmd.ExecuteNonQuery();
+            conexion.Close();
 
-                cmd.Parameters.Add("?pais_id", MySqlDbType.VarChar).Value = paisRequest.pais_id;
-                cmd.Parameters.Add("?nombre_pais", MySqlDbType.VarChar).Value = paisRequest.nombre_pais;
-                cmd.Parameters.Add("?capital", MySqlDbType.VarChar).Value = paisRequest.capital;
-                cmd.Parameters.Add("?region", MySqlDbType.VarChar).Value = paisRequest.region;
-                cmd.Parameters.Add("?poblacion", MySqlDbType.VarChar).Value = paisRequest.poblacion;
-
-                cmd.ExecuteNonQuery();
-            }
         }
-        public void ModificarCiudad(CiudadesModel ciudadRequest)
+
+        public void EliminarPais(Int64 pais_id)
         {
 
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
-            {
-                conexion.Open();
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises");
+            conexion.Open();
 
-                MySqlCommand cmd = new MySqlCommand();
-                cmd.Connection = conexion;
-                cmd.CommandText = "UPDATE `bdPaises`.`Ciudades` set nombre_ciudad = ?nombre_ciudad, region = ?region, poblacion = ?poblacion, latitud = ?latitud, longitud = ?longitud where ciudad_id = ?ciudad_id";
+            MySqlCommand cmd = new MySqlCommand();
+            cmd.Connection = conexion;
+            cmd.CommandText = "Delete from `bdPaises`.`Paises` where pais_id = ?pais_id ";
 
-                cmd.Parameters.Add("?nombre_ciudad", MySqlDbType.VarChar).Value = ciudadRequest.nombre_ciudad;
-                cmd.Parameters.Add("?region", MySqlDbType.VarChar).Value = ciudadRequest.region;
-                cmd.Parameters.Add("?poblacion", MySqlDbType.VarChar).Value = ciudadRequest.poblacion;
-                cmd.Parameters.Add("?ciudad_id", MySqlDbType.VarChar).Value = ciudadRequest.ciudad_id;
-                cmd.Parameters.Add("?latitud", MySqlDbType.VarChar).Value = ciudadRequest.latitud;
-                cmd.Parameters.Add("?longitud", MySqlDbType.VarChar).Value = ciudadRequest.longitud;
+            cmd.Parameters.Add("?pais_id", MySqlDbType.VarChar).Value = pais_id;
 
-                cmd.ExecuteNonQuery();
-            }
+            cmd.ExecuteNonQuery();
+            conexion.Close();
+
         }
-        public void EliminarPais(string pais_id)
-        {
 
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
-            {
-                conexion.Open();
-
-                MySqlCommand cmd = new MySqlCommand();
-                cmd.Connection = conexion;
-                cmd.CommandText = "Delete from `bdPaises`.`Paises` where pais_id = ?pais_id ";
-
-                cmd.Parameters.Add("?pais_id", MySqlDbType.VarChar).Value = pais_id;
-
-                cmd.ExecuteNonQuery();
-            }
-        }
-        public void EliminarCiudad(string ciudad_id)
-        {
-
-            using (MySqlConnection conexion = new MySqlConnection(_config.GetConnectionString("bdpaises")))
-            {
-                conexion.Open();
-
-                MySqlCommand cmd = new MySqlCommand();
-                cmd.Connection = conexion;
-                cmd.CommandText = "Delete from `bdPaises`.`Ciudades` where ciudad_id = ?ciudad_id ";
-
-                cmd.Parameters.Add("?ciudad_id", MySqlDbType.VarChar).Value = ciudad_id;
-
-                cmd.ExecuteNonQuery();
-            }
-        }
     }
 }

@@ -16,6 +16,7 @@ namespace NetCoreConcepts.Controllers
     public class CountriesController : ControllerBase
     {
         private readonly IConfiguration _config;
+        Dictionary<string, string> response = new Dictionary<string, string>();
 
         public CountriesController(IConfiguration config)
         {
@@ -28,7 +29,6 @@ namespace NetCoreConcepts.Controllers
         public IActionResult TodosLosPaises(UsuarioRequest request)
         {
             PaisesBo bo = new PaisesBo(_config);
-            var response = new Dictionary<string, string>();
             List<PaisesModel> countriesList = new List<PaisesModel>();
             try
             {
@@ -48,7 +48,6 @@ namespace NetCoreConcepts.Controllers
         public IActionResult ObtenerPaisesPorFechas(UsuarioRequest request)
         {
             PaisesBo bo = new PaisesBo(_config);
-            var response = new Dictionary<string, string>();
             List<PaisesModel> countriesList = new List<PaisesModel>();
             try
             {
@@ -68,7 +67,6 @@ namespace NetCoreConcepts.Controllers
         public IActionResult GetExcelPaises(UsuarioRequest request)
         {
             PaisesBo bo = new PaisesBo(_config);
-            var response = new Dictionary<string, string>();
             List<PaisesModel> countriesList = new List<PaisesModel>();
             try
             {
@@ -82,142 +80,70 @@ namespace NetCoreConcepts.Controllers
                 return StatusCode(500, response);
             }
         }
-        [Authorize()]
-        [HttpGet]
-        [Route("Countries/CiudadesPais")]
-        public async Task<string> ListarCiudades(string pais_id)
-        {
-            PaisesDal dal = new PaisesDal(_config);
-            List<CiudadesModel> countriesList = new List<CiudadesModel>();
-            try
-            {
-                countriesList = await Task.Run(() => dal.ObtenerCiudades(pais_id));
-                return JsonConvert.SerializeObject(countriesList);
-
-            }
-            catch (Exception ex)
-            {
-                return JsonConvert.SerializeObject("99");
-            }
-        }
-        [Authorize()]
-        [HttpPost]
-        [Route("Countries/IngresarCiudad")]
-        public async Task<string> IngresarCiudad(CiudadesModel ciudadRequest)
-        {
-            PaisesDal dal = new PaisesDal(_config);
-            List<CiudadesModel> ciudadesList = new List<CiudadesModel>();
-            try
-            {
-                dal.InsertarCiudad(ciudadRequest);
-                ciudadesList = await Task.Run(() => dal.ObtenerCiudades(ciudadRequest.pais_id.ToString()));
-                return JsonConvert.SerializeObject(ciudadesList);
-
-            }
-            catch (Exception ex)
-            {
-                return JsonConvert.SerializeObject("99");
-            }
-        }
+      
+      
 
         [Authorize()]
         [HttpPost]
         [Route("Countries/IngresarPais")]
-        public async Task<string> IngresarPais(PaisesModel paisRequest)
+        public IActionResult IngresarPais(PaisesModel paisRequest)
         {
-            PaisesDal dal = new PaisesDal(_config);
+            PaisesBo bo = new PaisesBo(_config);
             List<PaisesModel> countriesList = new List<PaisesModel>();
             try
             {
-                dal.InsertarPaises(paisRequest);
-                countriesList = await Task.Run(() => dal.ObtenerPaises(paisRequest.pais_id));
-                return JsonConvert.SerializeObject(countriesList);
+                countriesList = bo.IngresarPais(paisRequest);
+                return Ok(JsonConvert.SerializeObject(countriesList));
 
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject("99");
+                response.Add("Error", "Hubo un problema.");
+                return StatusCode(500, response);
             }
         }
         [Authorize()]
         [HttpPut]
         [Route("Countries/ModificarPais")]
-        public async Task<string> ModificarPais(PaisesModel paisRequest)
+        public IActionResult ModificarPais(PaisesModel paisRequest)
         {
-            PaisesDal dal = new PaisesDal(_config);
+            PaisesBo bo = new PaisesBo(_config);
             List<PaisesModel> countriesList = new List<PaisesModel>();
             try
             {
-                dal.ModificarPais(paisRequest);
-                countriesList = await Task.Run(() => dal.ObtenerPaises(paisRequest.pais_id));
-                return JsonConvert.SerializeObject(countriesList);
+                countriesList = bo.ModificarPais(paisRequest); ;
+                return Ok(JsonConvert.SerializeObject(countriesList));
 
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject("99");
+                response.Add("Error", "Hubo un problema.");
+                return StatusCode(500, response);
             }
         }
+      
+
         [Authorize()]
-        [HttpPut]
-        [Route("Countries/ModificarCiudad")]
-        public async Task<string> ModificarCiudad(CiudadesModel ciudadRequest)
+        [HttpDelete]
+        [Route("Countries/EliminarPais")]
+        public IActionResult EliminarPais(PaisesModel request)
         {
-            PaisesDal dal = new PaisesDal(_config);
-            List<CiudadesModel> ciudadList = new List<CiudadesModel>();
+            PaisesBo bo = new PaisesBo(_config);
+            List<PaisesModel> countriesList = new List<PaisesModel>();
             try
             {
-                dal.ModificarCiudad(ciudadRequest);
-                ciudadList = await Task.Run(() => dal.ObtenerCiudades(ciudadRequest.pais_id.ToString()));
-                return JsonConvert.SerializeObject(ciudadList);
+                countriesList =  bo.EliminarPais(request);
+                return Ok(JsonConvert.SerializeObject(countriesList));
 
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject("99");
+                response.Add("Error", "Hubo un problema.");
+                return StatusCode(500, response);
             }
         }
 
-            [Authorize()]
-            [HttpDelete]
-            [Route("Countries/EliminarPais")]
-            public async Task<string> EliminarPais(string pais_id)
-            {
-                PaisesDal dal = new PaisesDal(_config);
-                List<PaisesModel> countriesList = new List<PaisesModel>();
-            try
-                {
-                    dal.EliminarPais(pais_id);
-                    countriesList = await Task.Run(() => dal.ObtenerPaises(1)); 
-                    return JsonConvert.SerializeObject(countriesList);
 
-                }
-                catch (Exception ex)
-                {
-                    return JsonConvert.SerializeObject("99");
-                }
-            }
 
-        
-    [Authorize()]
-    [HttpDelete]
-    [Route("Countries/EliminarCiudad")]
-    public async Task<string> EliminarCiudad(string ciudad_id,string pais_id)
-    {
-        PaisesDal dal = new PaisesDal(_config);
-        List<CiudadesModel> ciudadList = new List<CiudadesModel>();
-        try
-        {
-            dal.EliminarCiudad(ciudad_id);
-                ciudadList = await Task.Run(() => dal.ObtenerCiudades(pais_id));
-            return JsonConvert.SerializeObject(ciudadList);
-
-        }
-        catch (Exception ex)
-        {
-            return JsonConvert.SerializeObject("99");
-        }
     }
-
-}
 }

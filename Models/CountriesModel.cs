@@ -15,6 +15,8 @@ namespace NetCoreConcepts.Models
         public string? capital { get; set; }
         public string? region { get; set; }
         public string? poblacion { get; set; }
+        public Int64 usuario_id { get; set; }
+        public string? usuario { get; set; }
     }
     public class CiudadesModel
     {
@@ -25,11 +27,13 @@ namespace NetCoreConcepts.Models
         public string? poblacion { get; set; }
         public string? latitud { get; set; }
         public string? longitud { get; set; }
+        public string? usuario { get; set; }
     }
     public class UsuarioRequest
     {
         public string? usuario { get; set;}
         public string? fecha_desde { get; set; }
         public string? fecha_hasta { get; set; }
+        public Int64 pais_id { get; set; }
     }
 }

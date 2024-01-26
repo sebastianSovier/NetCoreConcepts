@@ -38,6 +38,69 @@ namespace NetCoreConcepts.Bo
             }
 
         }
+        public List<PaisesModel>? IngresarPais(PaisesModel paisRequest)
+        {
+            PaisesDal paisesDal = new PaisesDal(_config);
+            LoginBo loginBo = new LoginBo(_config);
+
+            UsuarioModels usuario = loginBo.ObtenerUsuario(paisRequest.usuario!);
+
+            if (usuario != null)
+            {
+                paisRequest.usuario_id = usuario.usuario_id;
+                paisesDal.InsertarPaises(paisRequest);
+                List<PaisesModel> paises = paisesDal.ObtenerPaises(usuario.usuario_id);
+
+                return paises;
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+        public List<PaisesModel>? ModificarPais(PaisesModel paisRequest)
+        {
+            PaisesDal paisesDal = new PaisesDal(_config);
+            LoginBo loginBo = new LoginBo(_config);
+
+            UsuarioModels usuario = loginBo.ObtenerUsuario(paisRequest.usuario!);
+
+            if (usuario != null)
+            {
+                paisRequest.usuario_id = usuario.usuario_id;
+                paisesDal.ModificarPais(paisRequest);
+                List<PaisesModel> paises = paisesDal.ObtenerPaises(usuario.usuario_id);
+
+                return paises;
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+        public List<PaisesModel>? EliminarPais(PaisesModel paisRequest)
+        {
+            PaisesDal paisesDal = new PaisesDal(_config);
+            LoginBo loginBo = new LoginBo(_config);
+
+            UsuarioModels usuario = loginBo.ObtenerUsuario(paisRequest.usuario!);
+
+            if (usuario != null)
+            {
+                paisRequest.usuario_id = usuario.usuario_id;
+                paisesDal.EliminarPais(paisRequest.pais_id);
+                List<PaisesModel> paises = paisesDal.ObtenerPaises(usuario.usuario_id);
+
+                return paises;
+            }
+            else
+            {
+                return null;
+            }
+
+        }
         public List<PaisesModel>? ObtenerPaisesPorFechas(UsuarioRequest request)
         {
             PaisesDal paisesDal = new PaisesDal(_config);
