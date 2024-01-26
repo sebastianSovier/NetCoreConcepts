@@ -56,26 +56,6 @@ namespace NetCoreConcepts.Controllers
                 return StatusCode(500,response);
             }
         }
-
-      
-        [HttpGet]
-        [Route("Account/ObtenerUsuarios")]
-        public async Task<string> ObtenerUsuarios()
-        {
-            UsuarioDal dal = new UsuarioDal(_config);
-            List<UsuarioModels> usuarioList = new List<UsuarioModels>();
-            try
-            {
-
-                usuarioList = await Task.Run(() => dal.ObtenerUsuarios());
-                return JsonConvert.SerializeObject(usuarioList);
-
-            }
-            catch (Exception ex)
-            {
-                return JsonConvert.SerializeObject("99");
-            }
-        }
         [HttpPost]
         [Route("Account/IngresarUsuario")]
         public async Task<string> IngresarUsuario(UsuarioModels usuarioRequest)
