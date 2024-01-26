@@ -57,13 +57,21 @@ namespace NetCoreConcepts
                         OnMessageReceived = ValidateToken
                     };
                 });
-            services.AddCors();
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "NetCoreConcepts", Version = "v1" });
             });
-           
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin", builder =>
+                {
+                    builder.WithOrigins("http://localhost:8080").WithMethods("POST")
+            .AllowAnyHeader();
+                });
+            });
+
         }
         public static string GetTokenFromHeader(IHeaderDictionary requestHeaders)
         {
@@ -117,23 +125,23 @@ namespace NetCoreConcepts
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "NetCoreConcepts v1"));
             }
-            app.UseCors(builder => builder
-             .AllowAnyOrigin()
-             .AllowAnyMethod()
-            .AllowAnyHeader());
+
+
             app.UseHttpsRedirection();
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            app.UseAuthentication();
-
+            app.UseCors("AllowSpecificOrigin");
             app.UseAuthorization();
-
+            app.UseAuthentication();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+
+
         }
     }
 }
