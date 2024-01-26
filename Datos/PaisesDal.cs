@@ -82,9 +82,6 @@ namespace NetCoreConcepts.Dal
         {
 
             using MySqlConnection conexion = mysql!.getConexion("bdpaises");
-
-            conexion.Open();
-
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = conexion;
             cmd.CommandText = "INSERT INTO `bdPaises`.`Paises` (`nombre_pais`, `capital`, `region`, `poblacion`) VALUES (?nombre_pais, ?capital, ?region, ?poblacion);";
@@ -103,7 +100,6 @@ namespace NetCoreConcepts.Dal
         {
 
             using MySqlConnection conexion = mysql!.getConexion("bdpaises");
-            conexion.Open();
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = conexion;
             cmd.CommandText = "UPDATE `bdPaises`.`Paises` set nombre_pais = ?nombre_pais, capital = ?capital, region = ?region, poblacion = ?poblacion where pais_id = ?pais_id";
@@ -122,7 +118,6 @@ namespace NetCoreConcepts.Dal
         {
 
             using MySqlConnection conexion = mysql!.getConexion("bdpaises");
-            conexion.Open();
 
             MySqlCommand cmd = new MySqlCommand();
             cmd.Connection = conexion;

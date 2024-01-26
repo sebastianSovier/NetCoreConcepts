@@ -18,7 +18,7 @@ namespace NetCoreConcepts.Controllers
     {
         private readonly IConfiguration _config;
         Dictionary<string, string> response = new Dictionary<string, string>();
-
+        List<CiudadesModel> ciudadesList = new List<CiudadesModel>();
         public CiudadesController(IConfiguration config)
         {
             _config = config;
@@ -31,7 +31,7 @@ namespace NetCoreConcepts.Controllers
         public IActionResult ListarCiudades(UsuarioRequest request)
         {
             CiudadesBo bo = new CiudadesBo(_config);
-            List<CiudadesModel> ciudadesList = new List<CiudadesModel>();
+            
             try
             {
                 ciudadesList = bo.ObtenerCiudades(request);
@@ -50,7 +50,6 @@ namespace NetCoreConcepts.Controllers
         public IActionResult IngresarCiudad(CiudadesModel ciudadRequest)
         {
             CiudadesBo bo = new CiudadesBo(_config);
-            List<CiudadesModel> ciudadesList = new List<CiudadesModel>();
             try
             {
                 ciudadesList = bo.InsertarCiudad(ciudadRequest);
@@ -70,7 +69,6 @@ namespace NetCoreConcepts.Controllers
         public IActionResult ModificarCiudad(CiudadesModel ciudadRequest)
         {
             CiudadesBo bo = new CiudadesBo(_config);
-            List<CiudadesModel> ciudadesList = new List<CiudadesModel>();
             try
             {
                 ciudadesList = bo.ModificarCiudad(ciudadRequest);
@@ -90,7 +88,6 @@ namespace NetCoreConcepts.Controllers
         public IActionResult EliminarCiudad(CiudadesModel ciudadRequest)
         {
             CiudadesBo bo = new CiudadesBo(_config);
-            List<CiudadesModel> ciudadesList = new List<CiudadesModel>();
             try
             {
                 ciudadesList = bo.EliminarCiudad(ciudadRequest);

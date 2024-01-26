@@ -17,6 +17,7 @@ namespace NetCoreConcepts.Controllers
     {
         private readonly IConfiguration _config;
         Dictionary<string, string> response = new Dictionary<string, string>();
+        List<PaisesModel> countriesList = new List<PaisesModel>();
 
         public CountriesController(IConfiguration config)
         {
@@ -29,7 +30,6 @@ namespace NetCoreConcepts.Controllers
         public IActionResult TodosLosPaises(UsuarioRequest request)
         {
             PaisesBo bo = new PaisesBo(_config);
-            List<PaisesModel> countriesList = new List<PaisesModel>();
             try
             {
                 countriesList = bo.ObtenerPaises(request);
@@ -48,7 +48,6 @@ namespace NetCoreConcepts.Controllers
         public IActionResult ObtenerPaisesPorFechas(UsuarioRequest request)
         {
             PaisesBo bo = new PaisesBo(_config);
-            List<PaisesModel> countriesList = new List<PaisesModel>();
             try
             {
                 countriesList = bo.ObtenerPaisesPorFechas(request);
@@ -67,7 +66,6 @@ namespace NetCoreConcepts.Controllers
         public IActionResult GetExcelPaises(UsuarioRequest request)
         {
             PaisesBo bo = new PaisesBo(_config);
-            List<PaisesModel> countriesList = new List<PaisesModel>();
             try
             {
                 countriesList = bo.ObtenerPaises(request);
@@ -89,7 +87,6 @@ namespace NetCoreConcepts.Controllers
         public IActionResult IngresarPais(PaisesModel paisRequest)
         {
             PaisesBo bo = new PaisesBo(_config);
-            List<PaisesModel> countriesList = new List<PaisesModel>();
             try
             {
                 countriesList = bo.IngresarPais(paisRequest);
@@ -103,12 +100,11 @@ namespace NetCoreConcepts.Controllers
             }
         }
         [Authorize()]
-        [HttpPut]
+        [HttpPost]
         [Route("Countries/ModificarPais")]
         public IActionResult ModificarPais(PaisesModel paisRequest)
         {
             PaisesBo bo = new PaisesBo(_config);
-            List<PaisesModel> countriesList = new List<PaisesModel>();
             try
             {
                 countriesList = bo.ModificarPais(paisRequest); ;
@@ -124,12 +120,11 @@ namespace NetCoreConcepts.Controllers
       
 
         [Authorize()]
-        [HttpDelete]
+        [HttpPost]
         [Route("Countries/EliminarPais")]
         public IActionResult EliminarPais(PaisesModel request)
         {
             PaisesBo bo = new PaisesBo(_config);
-            List<PaisesModel> countriesList = new List<PaisesModel>();
             try
             {
                 countriesList =  bo.EliminarPais(request);
