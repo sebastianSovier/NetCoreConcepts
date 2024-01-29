@@ -35,7 +35,7 @@ namespace NetCoreConcepts.Controllers
 
                 usuario = Login.ObtenerUsuario(request.Username);
 
-                if (!(request.Username == usuario.usuario && utils.ComparePassword(request.Password,usuario.contrasena)))
+                if (!(request.Username == usuario.usuario) || !( utils.ComparePassword(request.Password,usuario.contrasena)))
             {
                 response.Add("Error", "Invalid username or password");
                 return StatusCode(403,response);
@@ -52,35 +52,41 @@ namespace NetCoreConcepts.Controllers
             }
             catch (Exception ex)
             {
+                utils.createlogFile(ex.Message);
                 response.Add("Error", "Hubo un problema al validar usuario.");
                 return StatusCode(500,response);
             }
         }
         [HttpPost]
         [Route("Account/IngresarUsuario")]
-        public async Task<string> IngresarUsuario(UsuarioModels usuarioRequest)
+        public IActionResult IngresarUsuario(UsuarioModels usuarioRequest)
         {
-            UsuarioDal dal = new UsuarioDal(_config);
-            UtilidadesApiss util = new UtilidadesApiss();
-            usuarioRequest.contrasena = usuarioRequest.contrasena;
-           /* List<UsuarioModels> usuarioList = new List<UsuarioModels>();*/
-            UsuarioModels usuario = new();
-            
+            LoginBo Login = new LoginBo(_config);
+            var response = new Dictionary<string, string>();
+            UsuarioModels usuario = new UsuarioModels();
+
             try
             {
-                usuario =dal.ObtenerUsuario(usuarioRequest.usuario);
+                usuario =Login.ObtenerUsuario(usuarioRequest.usuario);
                 if(usuario.nombre_completo == null) {
-                    await Task.Run(() => dal.CrearUsuario(usuarioRequest));
-                    return JsonConvert.SerializeObject("ok");
+                    Login.CrearUsuario(usuarioRequest);
+                    return Ok(new LoginResponse
+                    {
+                        auth = true
+
+                    });
                 }
                 else
                 {
-                    return JsonConvert.SerializeObject("usuario existe");
+                    return Ok();
                 }
+                
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject("99");
+                utils.createlogFile(ex.Message);
+                response.Add("Error", "Hubo un problema al crear usuario.");
+                return StatusCode(500, response);
             }
         }
     }

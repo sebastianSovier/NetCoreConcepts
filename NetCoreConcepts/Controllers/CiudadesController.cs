@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using NetCoreConcepts.Bo;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Negocio;
+using NetCoreConcepts.UtilidadesApi;
 
 namespace NetCoreConcepts.Controllers
 {
@@ -19,6 +20,8 @@ namespace NetCoreConcepts.Controllers
         private readonly IConfiguration _config;
         Dictionary<string, string> response = new Dictionary<string, string>();
         List<CiudadesModel> ciudadesList = new List<CiudadesModel>();
+        UtilidadesApiss utils = new UtilidadesApiss();
+
         public CiudadesController(IConfiguration config)
         {
             _config = config;
@@ -40,6 +43,7 @@ namespace NetCoreConcepts.Controllers
             }
             catch (Exception ex)
             {
+                utils.createlogFile(ex.Message);
                 response.Add("Error", "Hubo un problema.");
                 return StatusCode(500, response);
             }
@@ -58,6 +62,7 @@ namespace NetCoreConcepts.Controllers
             }
             catch (Exception ex)
             {
+                utils.createlogFile(ex.Message);
                 response.Add("Error", "Hubo un problema.");
                 return StatusCode(500, response);
             }
@@ -77,6 +82,7 @@ namespace NetCoreConcepts.Controllers
             }
             catch (Exception ex)
             {
+                utils.createlogFile(ex.Message);
                 response.Add("Error", "Hubo un problema.");
                 return StatusCode(500, response);
             }
@@ -96,6 +102,7 @@ namespace NetCoreConcepts.Controllers
             }
             catch (Exception ex)
             {
+                utils.createlogFile(ex.Message);
                 response.Add("Error", "Hubo un problema.");
                 return StatusCode(500, response);
             }

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using NetCoreConcepts.Bo;
 using NetCoreConcepts.Dal;
 using NetCoreConcepts.Models;
+using NetCoreConcepts.UtilidadesApi;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace NetCoreConcepts.Controllers
         private readonly IConfiguration _config;
         Dictionary<string, string> response = new Dictionary<string, string>();
         List<PaisesModel> countriesList = new List<PaisesModel>();
+        UtilidadesApiss utils = new UtilidadesApiss();
 
         public CountriesController(IConfiguration config)
         {
@@ -38,6 +40,7 @@ namespace NetCoreConcepts.Controllers
             }
             catch (Exception ex)
             {
+                utils.createlogFile(ex.Message);
                 response.Add("Error", "Hubo un problema.");
                 return StatusCode(500, response);
             }
@@ -56,6 +59,7 @@ namespace NetCoreConcepts.Controllers
             }
             catch (Exception ex)
             {
+                utils.createlogFile(ex.Message);
                 response.Add("Error", "Hubo un problema.");
                 return StatusCode(500, response);
             }
@@ -74,6 +78,7 @@ namespace NetCoreConcepts.Controllers
             }
             catch (Exception ex)
             {
+                utils.createlogFile(ex.Message);
                 response.Add("Error", "Hubo un problema.");
                 return StatusCode(500, response);
             }
@@ -95,6 +100,7 @@ namespace NetCoreConcepts.Controllers
             }
             catch (Exception ex)
             {
+                utils.createlogFile(ex.Message);
                 response.Add("Error", "Hubo un problema.");
                 return StatusCode(500, response);
             }
@@ -113,6 +119,7 @@ namespace NetCoreConcepts.Controllers
             }
             catch (Exception ex)
             {
+                utils.createlogFile(ex.Message);
                 response.Add("Error", "Hubo un problema.");
                 return StatusCode(500, response);
             }
@@ -133,6 +140,7 @@ namespace NetCoreConcepts.Controllers
             }
             catch (Exception ex)
             {
+                utils.createlogFile(ex.Message);
                 response.Add("Error", "Hubo un problema.");
                 return StatusCode(500, response);
             }

@@ -21,20 +21,10 @@ namespace Negocio
 
         public UsuarioModels ObtenerUsuario(string userName)
         {
-            try
-            {
                 UsuarioModels usuario = new UsuarioModels();
                 UsuarioDal usuarioDal = new UsuarioDal(_config);
-
                 usuario = usuarioDal.ObtenerUsuario(userName);
-
                 return usuario;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
 
         }
         public void CrearUsuario(UsuarioModels usuarioRequest)

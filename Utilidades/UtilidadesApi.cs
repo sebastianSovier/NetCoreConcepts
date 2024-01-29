@@ -10,10 +10,11 @@ namespace NetCoreConcepts.UtilidadesApi
 {
     public class UtilidadesApiss
     {
-        public UtilidadesApiss() { 
-        
+        public UtilidadesApiss()
+        {
+
         }
-        public bool ComparePassword(string paswordReq,string passwordhash)
+        public bool ComparePassword(string paswordReq, string passwordhash)
         {
             bool result = BCrypt.Net.BCrypt.Verify(paswordReq, passwordhash);
 
@@ -48,6 +49,36 @@ namespace NetCoreConcepts.UtilidadesApi
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+        public void createlogFile(string logMessage)
+        {
+            using (StreamWriter w = File.AppendText("log.txt"))
+            {
+                WriteLog(logMessage, w);
+            }
+
+            using (StreamReader r = File.OpenText("log.txt"))
+            {
+                ImprmLog(r);
+            }
+        }
+
+        public static void WriteLog(string logMessage, TextWriter w)
+        {
+            w.Write("\r\nLog Entry : ");
+            w.WriteLine($"{DateTime.Now.ToLongTimeString()} {DateTime.Now.ToLongDateString()}");
+            w.WriteLine("  :");
+            w.WriteLine($"  :{logMessage}");
+            w.WriteLine("-------------------------------");
+        }
+
+        public static void ImprmLog(StreamReader r)
+        {
+            string line;
+            while ((line = r.ReadLine()!) != null)
+            {
+                Console.WriteLine(line);
+            }
         }
 
 
