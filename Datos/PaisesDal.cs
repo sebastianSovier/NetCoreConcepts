@@ -113,13 +113,13 @@ namespace NetCoreConcepts.Dal
             {
                 MySqlCommand cmd = new MySqlCommand();
                 cmd.Connection = conexion;
-                cmd.CommandText = "INSERT INTO `bdPaises`.`Paises` (`nombre_pais`, `capital`, `region`, `poblacion`) VALUES (?nombre_pais, ?capital, ?region, ?poblacion);";
+                cmd.CommandText = "INSERT INTO `bdPaises`.`Paises` (`nombre_pais`, `capital`, `region`, `poblacion`,`usuario_id`) VALUES (?nombre_pais, ?capital, ?region, ?poblacion,?usuario_id);";
 
                 cmd.Parameters.Add("?nombre_pais", MySqlDbType.VarChar).Value = paisRequest.nombre_pais;
                 cmd.Parameters.Add("?capital", MySqlDbType.VarChar).Value = paisRequest.capital;
                 cmd.Parameters.Add("?region", MySqlDbType.VarChar).Value = paisRequest.region;
                 cmd.Parameters.Add("?poblacion", MySqlDbType.VarChar).Value = paisRequest.poblacion;
-
+                cmd.Parameters.Add("?usuario_id", MySqlDbType.VarChar).Value = paisRequest.usuario_id;
                 cmd.ExecuteNonQuery();
             }
             catch (Exception ex)
