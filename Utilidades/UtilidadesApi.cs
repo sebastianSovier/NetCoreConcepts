@@ -1,6 +1,7 @@
 ﻿using BCrypt.Net;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -52,12 +53,12 @@ namespace NetCoreConcepts.UtilidadesApi
         }
         public void createlogFile(string logMessage)
         {
-            using (StreamWriter w = File.AppendText("log.txt"))
+            using (StreamWriter w = File.AppendText("Log"+DateTime.Now.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) +".txt"))
             {
                 WriteLog(logMessage, w);
             }
 
-            using (StreamReader r = File.OpenText("log.txt"))
+            using (StreamReader r = File.OpenText("Log-" + DateTime.Now.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) + ".txt"))
             {
                 ImprmLog(r);
             }
