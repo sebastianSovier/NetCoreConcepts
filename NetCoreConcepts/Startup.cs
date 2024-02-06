@@ -34,6 +34,17 @@ namespace NetCoreConcepts
         public void ConfigureServices(IServiceCollection services)
         {
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
+
+             services.AddHttpsRedirection(options =>
+              {
+                  options.HttpsPort = 443;
+                 });
+
+            /* services.Configure<HstsOptions>(options =>
+             {
+                 options.Preload = false;
+                 options.IncludeSubDomains = false;
+             });*/
             services
                 .AddAuthentication(options =>
                 {
@@ -61,7 +72,7 @@ namespace NetCoreConcepts
             {
                 options.AddPolicy("AllowSpecificOrigin", builder =>
                 {
-                    builder.WithOrigins("http://localhost:8080").WithMethods("POST").WithHeaders("Authorization");
+                    builder.WithOrigins("http://localhost:3000").WithMethods("POST").AllowAnyHeader();
                 });
             });
             services.AddControllers();

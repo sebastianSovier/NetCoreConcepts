@@ -68,7 +68,7 @@ namespace Datos
             {
                 MySqlCommand cmd = new MySqlCommand();
                 cmd.Connection = conexion;
-                cmd.CommandText = "INSERT INTO `bdPaises`.`Ciudades` (`pais_id`, `nombre_ciudad`, `poblacion`, `region`, `latitud`, `longitud`) VALUES (?pais_id, ?nombre_ciudad, ?poblacion, ?region, ?latitud, ?longitud);";
+                cmd.CommandText = "INSERT INTO `bdpaises`.`Ciudades` (`pais_id`, `nombre_ciudad`, `poblacion`, `region`, `latitud`, `longitud`) VALUES (?pais_id, ?nombre_ciudad, ?poblacion, ?region, ?latitud, ?longitud);";
 
                 cmd.Parameters.Add("?pais_id", MySqlDbType.Int64).Value = ciudadRequest.pais_id;
                 cmd.Parameters.Add("?nombre_ciudad", MySqlDbType.VarChar).Value = ciudadRequest.nombre_ciudad;
@@ -98,7 +98,7 @@ namespace Datos
             {
                 MySqlCommand cmd = new MySqlCommand();
                 cmd.Connection = conexion;
-                cmd.CommandText = "UPDATE `bdPaises`.`Ciudades` set nombre_ciudad = ?nombre_ciudad, region = ?region, poblacion = ?poblacion, latitud = ?latitud, longitud = ?longitud where ciudad_id = ?ciudad_id";
+                cmd.CommandText = "UPDATE `bdpaises`.`Ciudades` set nombre_ciudad = ?nombre_ciudad, region = ?region, poblacion = ?poblacion, latitud = ?latitud, longitud = ?longitud where ciudad_id = ?ciudad_id";
 
                 cmd.Parameters.Add("?nombre_ciudad", MySqlDbType.VarChar).Value = ciudadRequest.nombre_ciudad;
                 cmd.Parameters.Add("?region", MySqlDbType.VarChar).Value = ciudadRequest.region;
@@ -128,7 +128,7 @@ namespace Datos
             {
                 MySqlCommand cmd = new MySqlCommand();
                 cmd.Connection = conexion;
-                cmd.CommandText = "Delete from `bdPaises`.`Ciudades` where ciudad_id = ?ciudad_id ";
+                cmd.CommandText = "Delete from `bdpaises`.`Ciudades` where ciudad_id = ?ciudad_id ";
 
                 cmd.Parameters.Add("?ciudad_id", MySqlDbType.VarChar).Value = ciudad_id;
 

@@ -53,17 +53,18 @@ namespace NetCoreConcepts.UtilidadesApi
         }
         public void createlogFile(string logMessage)
         {
-            using (StreamWriter w = File.AppendText("Log"+DateTime.Now.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) +".txt"))
-            {
-                WriteLog(logMessage, w);
-            }
+            /* File.Delete("Log//Log-" + DateTime.Now.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture) + ".txt");
+             using (StreamWriter w = File.AppendText("Log//Log-"+DateTime.Now.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture) +".txt"))
+             {
+                 WriteLog(logMessage, w);
+             }
 
-            using (StreamReader r = File.OpenText("Log-" + DateTime.Now.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture) + ".txt"))
-            {
-                ImprmLog(r);
-            }
+             using (StreamReader r = File.OpenText("Log//Log-" + DateTime.Now.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture) + ".txt"))
+             {*/
+            //ImprmLog(r);
+            Console.WriteLine(logMessage);
+            //}
         }
-
         public static void WriteLog(string logMessage, TextWriter w)
         {
             w.Write("\r\nLog Entry : ");

@@ -97,7 +97,7 @@ namespace NetCoreConcepts.Dal
             {
                 MySqlCommand cmd = new MySqlCommand();
                 cmd.Connection = conexion;
-                cmd.CommandText = "INSERT INTO `bdPaises`.`Usuarios` (`usuario`, `contrasena`, `nombre_completo`, `correo`) VALUES (?usuario, ?contrasena, ?nombre_completo, ?correo);";
+                cmd.CommandText = "INSERT INTO `bdpaises`.`Usuarios` (`usuario`, `contrasena`, `nombre_completo`, `correo`) VALUES (?usuario, ?contrasena, ?nombre_completo, ?correo);";
 
                 cmd.Parameters.Add("?usuario", MySqlDbType.VarChar).Value = usuarioRequest.usuario;
                 cmd.Parameters.Add("?contrasena", MySqlDbType.VarChar).Value = usuarioRequest.contrasena;
