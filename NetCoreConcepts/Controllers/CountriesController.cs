@@ -83,8 +83,26 @@ namespace NetCoreConcepts.Controllers
                 return StatusCode(500, response);
             }
         }
-      
-      
+        [Authorize()]
+        [HttpPost]
+        [Route("Countries/GetDataFromExcel")]
+        public IActionResult GetDataFromExcel(ExcelDataRequest request)
+        {
+            PaisesBo bo = new PaisesBo(_config);
+            try
+            {
+                countriesList = bo.ImportarExcel(request);
+                return Ok(JsonConvert.SerializeObject(countriesList));
+
+            }
+            catch (Exception ex)
+            {
+                utils.createlogFile(ex.Message);
+                response.Add("Error", "Hubo un problema.");
+                return StatusCode(500, response);
+            }
+        }
+
 
         [Authorize()]
         [HttpPost]

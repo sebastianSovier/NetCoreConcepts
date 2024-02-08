@@ -21,7 +21,7 @@ namespace NetCoreConcepts.Dal
 
         public List<PaisesModel> ObtenerPaises(Int64 usuario_id)
         {
-            using MySqlConnection conexion = mysql!.getConexion("bdpaises");
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises1");
             try
             {
                 List<PaisesModel> listPaises = new List<PaisesModel>();
@@ -43,6 +43,7 @@ namespace NetCoreConcepts.Dal
                     paises.capital = reader["capital"].ToString();
                     paises.region = reader["region"].ToString();
                     paises.poblacion = reader["poblacion"].ToString();
+                    paises.fecha_registro = (DateTime?)reader["fecha_registro"];
                     listPaises.Add(paises);
 
                 }
@@ -62,7 +63,7 @@ namespace NetCoreConcepts.Dal
         }
         public List<PaisesModel> ObtenerPaisesPorFecha(string? fecha_desde, string? fecha_hasta, Int64 usuario_id)
         {
-            using MySqlConnection conexion = mysql!.getConexion("bdpaises");
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises1");
             try
             {
                 List<PaisesModel> listPaises = new List<PaisesModel>();
@@ -108,7 +109,7 @@ namespace NetCoreConcepts.Dal
         public void InsertarPaises(PaisesModel paisRequest)
         {
 
-            using MySqlConnection conexion = mysql!.getConexion("bdpaises");
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises1");
             try
             {
                 MySqlCommand cmd = new MySqlCommand();
@@ -137,7 +138,7 @@ namespace NetCoreConcepts.Dal
         public void ModificarPais(PaisesModel paisRequest)
         {
 
-            using MySqlConnection conexion = mysql!.getConexion("bdpaises");
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises1");
             try
             {
                 MySqlCommand cmd = new MySqlCommand();
@@ -166,7 +167,7 @@ namespace NetCoreConcepts.Dal
         public void EliminarPais(Int64 pais_id)
         {
 
-            using MySqlConnection conexion = mysql!.getConexion("bdpaises");
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises1");
             try
             {
 

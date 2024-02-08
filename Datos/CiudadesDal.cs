@@ -21,7 +21,7 @@ namespace Datos
 
         public List<CiudadesModel> ObtenerCiudades(Int64 pais_id)
         {
-            using MySqlConnection conexion = mysql!.getConexion("bdpaises");
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises1");
             try
             {
                 List<CiudadesModel> listaCiudades = new List<CiudadesModel>();
@@ -63,7 +63,7 @@ namespace Datos
         public void InsertarCiudad(CiudadesModel ciudadRequest)
         {
 
-            using MySqlConnection conexion = mysql!.getConexion("bdpaises");
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises1");
             try
             {
                 MySqlCommand cmd = new MySqlCommand();
@@ -93,7 +93,7 @@ namespace Datos
         public void ModificarCiudad(CiudadesModel ciudadRequest)
         {
 
-            using MySqlConnection conexion = mysql!.getConexion("bdpaises");
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises1");
             try
             {
                 MySqlCommand cmd = new MySqlCommand();
@@ -123,7 +123,7 @@ namespace Datos
         public void EliminarCiudad(Int64 ciudad_id)
         {
 
-            using MySqlConnection conexion = mysql!.getConexion("bdpaises");
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises1");
             try
             {
                 MySqlCommand cmd = new MySqlCommand();

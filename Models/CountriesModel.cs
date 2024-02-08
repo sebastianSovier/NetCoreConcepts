@@ -15,6 +15,8 @@ namespace NetCoreConcepts.Models
         public string? capital { get; set; }
         public string? region { get; set; }
         public string? poblacion { get; set; }
+
+        public DateTime? fecha_registro { get; set; }
         public Int64 usuario_id { get; set; }
         public string? usuario { get; set; }
     }
@@ -35,5 +37,11 @@ namespace NetCoreConcepts.Models
         public string? fecha_desde { get; set; }
         public string? fecha_hasta { get; set; }
         public Int64 pais_id { get; set; }
+    }
+
+    public class ExcelDataRequest
+    {
+        public string? base64string { get; set; }
+        public string? usuario { get; set; }
     }
 }

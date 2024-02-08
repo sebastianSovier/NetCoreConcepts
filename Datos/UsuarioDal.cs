@@ -19,7 +19,7 @@ namespace NetCoreConcepts.Dal
 
         public List<UsuarioModels> ObtenerUsuarios()
         {
-            using MySqlConnection conexion = mysql!.getConexion("bdpaises");
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises1");
             try
             {
                 List<UsuarioModels> listUsuarios = new List<UsuarioModels>();
@@ -54,7 +54,7 @@ namespace NetCoreConcepts.Dal
         }
         public UsuarioModels ObtenerUsuario(string usuarioRequest)
         {
-            using MySqlConnection conexion = mysql!.getConexion("bdpaises");
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises1");
             try
             {
                 UsuarioModels usuario = new UsuarioModels();
@@ -92,7 +92,7 @@ namespace NetCoreConcepts.Dal
         public void CrearUsuario(UsuarioModels usuarioRequest)
         {
 
-            using MySqlConnection conexion = mysql!.getConexion("bdpaises");
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises1");
             try
             {
                 MySqlCommand cmd = new MySqlCommand();
