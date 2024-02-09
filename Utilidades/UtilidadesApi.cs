@@ -1,6 +1,8 @@
 ﻿using BCrypt.Net;
+using ExcelDataReader;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -83,6 +85,19 @@ namespace NetCoreConcepts.UtilidadesApi
             }
         }
 
+        public DataTable ConvertExcel(string file)
+        {
+            byte[] byteArray = Convert.FromBase64String(file);
+            using MemoryStream memoryStream = new MemoryStream(byteArray);
+            using BinaryReader binaryReader = new BinaryReader(memoryStream, Encoding.UTF8);
+            byte[] data = binaryReader.ReadBytes(byteArray.Length);
+            Console.WriteLine(BitConverter.ToString(data));
+            Stream stream = new MemoryStream(data);
+            IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
 
+            var result = reader.AsDataSet();
+            DataTable dataExcel = result.Tables[0];
+            return dataExcel;
+        }
     }
 }

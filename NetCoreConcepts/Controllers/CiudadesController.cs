@@ -67,7 +67,25 @@ namespace NetCoreConcepts.Controllers
                 return StatusCode(500, response);
             }
         }
+        [Authorize()]
+        [HttpPost]
+        [Route("Ciudades/GetDataFromExcel")]
+        public IActionResult GetDataFromExcel([FromBody] ExcelDataRequest request)
+        {
+            CiudadesBo bo = new CiudadesBo(_config);
+            try
+            {
+                ciudadesList = bo.ImportarExcel(request);
+                return Ok(JsonConvert.SerializeObject(ciudadesList));
 
+            }
+            catch (Exception ex)
+            {
+                utils.createlogFile(ex.Message);
+                response.Add("Error", "Hubo un problema.");
+                return StatusCode(500, response);
+            }
+        }
         [Authorize()]
         [HttpPost]
         [Route("Ciudades/ModificarCiudad")]

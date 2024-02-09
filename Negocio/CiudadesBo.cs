@@ -1,9 +1,12 @@
 ﻿using Datos;
+using ExcelDataReader;
 using Microsoft.Extensions.Configuration;
 using NetCoreConcepts.Dal;
 using NetCoreConcepts.Models;
+using NetCoreConcepts.UtilidadesApi;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +15,8 @@ namespace Negocio
 {
     public class CiudadesBo
     {
+        UtilidadesApiss utils = new UtilidadesApiss();
+
         private readonly IConfiguration _config;
 
         public CiudadesBo(IConfiguration config)
@@ -57,6 +62,56 @@ namespace Negocio
 
             return ciudades;
 
+        }
+        public List<CiudadesModel>? ImportarExcel(ExcelDataRequest request)
+        {
+            CiudadesDal ciudadesDal = new CiudadesDal(_config);
+            LoginBo loginBo = new LoginBo(_config);
+
+            UsuarioModels usuario = loginBo.ObtenerUsuario(request.usuario!);
+
+            if (usuario != null)
+            {
+                LecturaExcelCiudad(usuario, request.base64string!, request.pais_id);
+                List<CiudadesModel> ciudades = ciudadesDal.ObtenerCiudades(request.pais_id);
+
+                return ciudades;
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+        private void LecturaExcelCiudad(UsuarioModels usuario, string file, long pais_id)
+        {
+            List<CiudadesModel> ciudades = new();
+            CiudadesDal ciudadesDal = new CiudadesDal(_config);
+            try
+            {
+                DataTable dataExcel = utils.ConvertExcel(file);
+                for (int i = 1; i <= dataExcel.Rows.Count - 1; i++)
+                {
+                    CiudadesModel ciudad = new();
+                    ciudad.pais_id = pais_id;
+                    ciudad.nombre_ciudad = dataExcel.Rows[i][0].ToString();
+                    ciudad.poblacion = dataExcel.Rows[i][1].ToString();
+                    ciudad.region = dataExcel.Rows[i][2].ToString();
+                    ciudad.latitud = dataExcel.Rows[i][3].ToString();
+                    ciudad.longitud = dataExcel.Rows[i][4].ToString();
+
+                    ciudades.Add(ciudad);
+                }
+                foreach (CiudadesModel ciudad in ciudades)
+                {
+                    ciudadesDal.InsertarCiudad(ciudad);
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

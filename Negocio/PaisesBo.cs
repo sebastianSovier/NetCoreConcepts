@@ -1,9 +1,12 @@
-﻿using ExcelDataReader;
+﻿using Datos;
+using ExcelDataReader;
 using Microsoft.Extensions.Configuration;
+using MySql.Data.MySqlClient;
 using Mysqlx.Expr;
 using Negocio;
 using NetCoreConcepts.Dal;
 using NetCoreConcepts.Models;
+using NetCoreConcepts.UtilidadesApi;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -17,6 +20,7 @@ namespace NetCoreConcepts.Bo
 {
     public class PaisesBo
     {
+        UtilidadesApiss utils = new UtilidadesApiss();
         private readonly IConfiguration _config;
         public PaisesBo(IConfiguration config)
         {
@@ -51,10 +55,10 @@ namespace NetCoreConcepts.Bo
 
             if (usuario != null)
             {
-                LecturaExcel(usuario,request.base64string!);
+                LecturaExcelPais(usuario, request.base64string!);
                 List<PaisesModel> paises = paisesDal.ObtenerPaises(usuario.usuario_id);
-
                 return paises;
+
             }
             else
             {
@@ -63,30 +67,13 @@ namespace NetCoreConcepts.Bo
 
         }
 
-        private List<PaisesModel> LecturaExcel(UsuarioModels usuario,string file)
-        {   List<PaisesModel> paises = new();
+        private void LecturaExcelPais(UsuarioModels usuario, string file)
+        {
+            List<PaisesModel> paises = new();
             PaisesDal paisesDal = new PaisesDal(_config);
             try
             {
-                byte[] byteArray = Convert.FromBase64String(file);
-
-                // Create a MemoryStream from the byte array
-                using MemoryStream memoryStream = new MemoryStream(byteArray);
-                // Create a BinaryReader from the MemoryStream
-                using BinaryReader binaryReader = new BinaryReader(memoryStream, Encoding.UTF8);
-                // Now you can use the BinaryReader to read binary data
-                // For example:
-                byte[] data = binaryReader.ReadBytes(byteArray.Length);
-                Console.WriteLine(BitConverter.ToString(data));
-                /* WorkBook workbook = WorkBook.Load(binData);
-                 WorkSheet sheet = workbook.WorkSheets.FirstOrDefault();
-                 DataTable dataExcel = sheet.ToDataTable();*/
-                Stream stream = new MemoryStream(data);
-                IExcelDataReader reader = ExcelReaderFactory.CreateReader(stream);
-
-                var result = reader.AsDataSet();
-                // Ejemplos de acceso a datos
-                DataTable dataExcel = result.Tables[0];
+                DataTable dataExcel = utils.ConvertExcel(file);
                 for (int i = 1; i <= dataExcel.Rows.Count - 1; i++)
                 {
                     PaisesModel pais = new();
@@ -107,8 +94,8 @@ namespace NetCoreConcepts.Bo
 
                 throw;
             }
-            return paises;
         }
+
         public List<PaisesModel>? IngresarPais(PaisesModel paisRequest)
         {
             PaisesDal paisesDal = new PaisesDal(_config);

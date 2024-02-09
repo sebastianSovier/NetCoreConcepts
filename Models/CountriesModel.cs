@@ -43,5 +43,7 @@ namespace NetCoreConcepts.Models
     {
         public string? base64string { get; set; }
         public string? usuario { get; set; }
+
+        public long pais_id { get; set; }
     }
 }

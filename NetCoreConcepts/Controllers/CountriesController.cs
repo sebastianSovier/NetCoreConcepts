@@ -86,7 +86,7 @@ namespace NetCoreConcepts.Controllers
         [Authorize()]
         [HttpPost]
         [Route("Countries/GetDataFromExcel")]
-        public IActionResult GetDataFromExcel(ExcelDataRequest request)
+        public IActionResult GetDataFromExcel([FromBody] ExcelDataRequest request)
         {
             PaisesBo bo = new PaisesBo(_config);
             try
