@@ -14,7 +14,7 @@ namespace NetCoreConcepts.Models
             public string? access_Token { get; set; }
             public bool? auth { get; set; }
             public Int64? id { get; set; }
-
+            public string? correo { get; set; }
         }
     }
     public class UsuarioModels { 

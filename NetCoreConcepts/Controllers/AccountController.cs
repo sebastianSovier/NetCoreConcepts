@@ -46,7 +46,8 @@ namespace NetCoreConcepts.Controllers
             {
                 access_Token = token,
                 auth = true,
-                id = usuario.usuario_id
+                id = usuario.usuario_id,
+                correo = usuario.correo
 
             });
             }
