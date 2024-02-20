@@ -9,7 +9,8 @@ namespace NetCoreConcepts.Models
         public string? population { get; set; }
 
     }
-    public class PaisesModel {
+    public class PaisesModel
+    {
         public Int64 pais_id { get; set; }
         public string? nombre_pais { get; set; }
         public string? capital { get; set; }
@@ -19,6 +20,39 @@ namespace NetCoreConcepts.Models
         public DateTime? fecha_registro { get; set; }
         public Int64 usuario_id { get; set; }
         public string? usuario { get; set; }
+    }
+    public class PaisesListUsuarioId
+    {
+        public List<List<PaisesModelCiudades>>? list { get; set; }
+    }
+    public class PaisesModelCiudades
+    {
+        public Int64 pais_id { get; set; }
+        public string? nombre_pais { get; set; }
+        public string? capital { get; set; }
+        public string? region { get; set; }
+        public string? poblacion { get; set; }
+
+        public DateTime? fecha_registro { get; set; }
+        public Int64 usuario_id { get; set; }
+        public string? usuario { get; set; }
+        public string? correo { get; set; }
+        public string? nombre { get; set; }
+        public List<CiudadesModel>? listCiudades { get; set; }
+
+        public List<PaisesModelCiudades>? listPaises { get; set; }
+        public string? listCiudadesSerialize { get; set; }
+    }
+    public class PaisesModelCiudadesOut
+    {
+        public Int64 usuario_id { get; set; }
+        public string? correo { get; set; }
+        public string? nombre { get; set; }
+        public List<CiudadesModel>? listCiudades { get; set; }
+
+        public List<PaisesModelCiudades>? listPaises { get; set; }
+        public string? listPaisesSerialize { get; set; }
+        public string? listCiudadesSerialize { get; set; }
     }
     public class CiudadesModel
     {
@@ -33,7 +67,7 @@ namespace NetCoreConcepts.Models
     }
     public class UsuarioRequest
     {
-        public string? usuario { get; set;}
+        public string? usuario { get; set; }
         public string? fecha_desde { get; set; }
         public string? fecha_hasta { get; set; }
         public Int64 pais_id { get; set; }

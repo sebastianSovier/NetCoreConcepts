@@ -60,6 +60,47 @@ namespace Datos
 
 
         }
+        public List<CiudadesModel> ObtenerCiudadesByPaises(Int64 pais_id)
+        {
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises1");
+            try
+            {
+                List<CiudadesModel> listaCiudades = new ();
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.Connection = conexion;
+                cmd.CommandText = $"select ciudad_id,pais_id,nombre_ciudad,poblacion,region,fecha_registro,latitud,longitud from Ciudades where pais_id = ?pais_id order by pais_id;";
+                cmd.Parameters.Add("?pais_id", MySqlDbType.Int64).Value = pais_id;
+
+
+                using MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    CiudadesModel paises = new CiudadesModel();
+                    paises.ciudad_id = Convert.ToInt32(reader["ciudad_id"]);
+                    paises.pais_id = Convert.ToInt32(reader["pais_id"]);
+                    paises.nombre_ciudad = reader["nombre_ciudad"].ToString();
+                    paises.region = reader["region"].ToString();
+                    paises.poblacion = reader["poblacion"].ToString();
+                    paises.latitud = reader["latitud"].ToString();
+                    paises.longitud = reader["longitud"].ToString();
+                    listaCiudades.Add(paises);
+
+                }
+                return listaCiudades;
+            }
+            catch (Exception ex)
+            {
+
+                utils.createlogFile(ex.Message); throw;
+            }
+            finally
+            {
+                conexion.Close();
+            }
+
+
+        }
         public void InsertarCiudad(CiudadesModel ciudadRequest)
         {
 

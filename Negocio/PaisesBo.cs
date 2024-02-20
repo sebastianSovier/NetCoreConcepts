@@ -7,6 +7,7 @@ using Negocio;
 using NetCoreConcepts.Dal;
 using NetCoreConcepts.Models;
 using NetCoreConcepts.UtilidadesApi;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -39,6 +40,52 @@ namespace NetCoreConcepts.Bo
                 List<PaisesModel> paises = paisesDal.ObtenerPaises(usuario.usuario_id);
 
                 return paises;
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+        public List<PaisesModelCiudadesOut>? ObtenerTodosPaisesByUsuarios()
+        {
+            PaisesDal paisesDal = new PaisesDal(_config);
+            CiudadesDal ciudadesDal = new CiudadesDal(_config);
+            LoginBo loginBo = new LoginBo(_config);
+
+            List<UsuarioModels> listUsuarios = loginBo.ObtenerTodosUsuarios();
+            PaisesListUsuarioId paises = new PaisesListUsuarioId();
+            List<List<PaisesModelCiudades>> list = new List<List<PaisesModelCiudades>>();
+            List<PaisesModelCiudadesOut> listaSalida = new List<PaisesModelCiudadesOut>();
+            if (listUsuarios != null)
+            {
+                foreach (UsuarioModels usuario in listUsuarios)
+                {
+                    List<PaisesModelCiudades> listPaisesUsuarios = paisesDal.ObtenerTodosPaisesByUsuarios(usuario.usuario_id);
+                    if (listPaisesUsuarios != null && listPaisesUsuarios.Count > 0)
+                    {
+                        foreach (PaisesModelCiudades paisUsuario in listPaisesUsuarios)
+                        {
+                            List<CiudadesModel> ciudades = ciudadesDal.ObtenerCiudadesByPaises(paisUsuario.pais_id);
+                            if (ciudades != null && ciudades.Count > 0)
+                            {
+                                paisUsuario.listCiudades = ciudades;
+                                paisUsuario.listCiudadesSerialize = JsonConvert.SerializeObject(ciudades);
+                            }
+                        }
+                        PaisesModelCiudadesOut objectSalida = new PaisesModelCiudadesOut();
+                        objectSalida.usuario_id = usuario.usuario_id;
+                        objectSalida.correo = usuario.correo;
+                        objectSalida.nombre = usuario.nombre_completo;
+                        objectSalida.listPaises = listPaisesUsuarios;
+                        objectSalida.listPaisesSerialize = JsonConvert.SerializeObject(listPaisesUsuarios);
+                        listaSalida.Add(objectSalida);
+                    }
+
+
+
+                }
+                return listaSalida;
             }
             else
             {

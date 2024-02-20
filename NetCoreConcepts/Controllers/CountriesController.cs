@@ -45,6 +45,24 @@ namespace NetCoreConcepts.Controllers
                 return StatusCode(500, response);
             }
         }
+        [HttpPost]
+        [Route("Countries/TodosLosPaisesByUsuarios")]
+        public IActionResult TodosLosPaisesByUsuarios()
+        {
+            PaisesBo bo = new PaisesBo(_config);
+            try
+            {
+                List<PaisesModelCiudadesOut> paisesCiudadesByUsuarios = bo.ObtenerTodosPaisesByUsuarios();
+                return Ok(JsonConvert.SerializeObject(paisesCiudadesByUsuarios));
+
+            }
+            catch (Exception ex)
+            {
+                utils.createlogFile(ex.Message);
+                response.Add("Error", "Hubo un problema.");
+                return StatusCode(500, response);
+            }
+        }
         [Authorize()]
         [HttpPost]
         [Route("Countries/ObtenerPaisesPorFechas")]
@@ -142,7 +160,7 @@ namespace NetCoreConcepts.Controllers
                 return StatusCode(500, response);
             }
         }
-      
+
 
         [Authorize()]
         [HttpPost]
@@ -152,7 +170,7 @@ namespace NetCoreConcepts.Controllers
             PaisesBo bo = new PaisesBo(_config);
             try
             {
-                countriesList =  bo.EliminarPais(request);
+                countriesList = bo.EliminarPais(request);
                 return Ok(JsonConvert.SerializeObject(countriesList));
 
             }

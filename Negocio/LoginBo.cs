@@ -27,6 +27,14 @@ namespace Negocio
                 return usuario;
 
         }
+        public List<UsuarioModels> ObtenerTodosUsuarios()
+        {
+            List<UsuarioModels> usuario = new ();
+            UsuarioDal usuarioDal = new UsuarioDal(_config);
+            usuario = usuarioDal.ObtenerTodosUsuarios();
+            return usuario;
+
+        }
         public void CrearUsuario(UsuarioModels usuarioRequest)
         {
             UsuarioDal usuarioDal = new UsuarioDal(_config);

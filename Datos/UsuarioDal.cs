@@ -40,14 +40,15 @@ namespace NetCoreConcepts.Dal
 
 
                 }
-              
+
                 return listUsuarios;
             }
             catch (Exception ex)
             {
 
                 utils.createlogFile(ex.Message); throw;
-            }finally
+            }
+            finally
             {
                 conexion.Close();
             }
@@ -77,6 +78,42 @@ namespace NetCoreConcepts.Dal
                 }
 
                 return usuario;
+            }
+            catch (Exception ex)
+            {
+
+                utils.createlogFile(ex.Message); throw;
+            }
+            finally
+            {
+                conexion.Close();
+            }
+        }
+        public List<UsuarioModels> ObtenerTodosUsuarios()
+        {
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises1");
+            try
+            {
+                List<UsuarioModels> list = new();
+                UsuarioModels usuario = new UsuarioModels();
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.Connection = conexion;
+                cmd.CommandText = $"select usuario_id,usuario,contrasena,nombre_completo,correo,fecha_registro from Usuarios order by usuario_id;";
+                using MySqlDataReader reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    UsuarioModels Usuario = new UsuarioModels();
+                    Usuario.usuario_id = Convert.ToInt32(reader["usuario_id"]);
+                    Usuario.usuario = reader["usuario"].ToString();
+                    Usuario.nombre_completo = reader["nombre_completo"].ToString();
+                    Usuario.correo = reader["correo"].ToString();
+                    usuario = Usuario;
+                    list.Add(usuario);
+
+                }
+
+                return list;
             }
             catch (Exception ex)
             {

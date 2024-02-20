@@ -61,6 +61,48 @@ namespace NetCoreConcepts.Dal
 
 
         }
+        public List<PaisesModelCiudades> ObtenerTodosPaisesByUsuarios(Int64 usuario_id)
+        {
+            using MySqlConnection conexion = mysql!.getConexion("bdpaises1");
+            try
+            {
+                List<PaisesModelCiudades> listPaises = new List<PaisesModelCiudades>();
+                MySqlCommand cmd = new MySqlCommand();
+                cmd.Connection = conexion;
+                cmd.CommandText = "p_listar_paises";
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@p_usuario_id", usuario_id);
+                cmd.Parameters["@p_usuario_id"].Direction = ParameterDirection.Input;
+
+                using MySqlDataReader reader = cmd.ExecuteReader();
+
+
+                while (reader.Read())
+                {
+                    PaisesModelCiudades paises = new PaisesModelCiudades();
+                    paises.pais_id = Convert.ToInt32(reader["pais_id"]);
+                    paises.nombre_pais = reader["nombre_pais"].ToString();
+                    paises.capital = reader["capital"].ToString();
+                    paises.region = reader["region"].ToString();
+                    paises.poblacion = reader["poblacion"].ToString();
+                    paises.fecha_registro = (DateTime?)reader["fecha_registro"];
+                    listPaises.Add(paises);
+
+                }
+                return listPaises;
+            }
+            catch (Exception ex)
+            {
+
+                utils.createlogFile(ex.Message); throw;
+            }
+            finally
+            {
+                conexion.Close();
+            }
+
+
+        }
         public List<PaisesModel> ObtenerPaisesPorFecha(string? fecha_desde, string? fecha_hasta, Int64 usuario_id)
         {
             using MySqlConnection conexion = mysql!.getConexion("bdpaises1");
