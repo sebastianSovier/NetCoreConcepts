@@ -9,7 +9,7 @@ networks:
 
 services:
    mysql:
-    image: mysql:latest
+    image: mysql:lts
     networks:
       mi_red:
         ipv4_address: 172.18.0.3
@@ -21,38 +21,50 @@ services:
     ports:
       - "3306:3306"
     restart: always
+    volumes:
+      - mysql_data:/var/lib/mysql
     
    net-core-concepts:
-    image: net-core-concepts:latest
     networks:
       mi_red:
         ipv4_address: 172.18.0.2
     build:
       context: .
-      dockerfile: NetCoreConcepts/Dockerfile
+      dockerfile: NetCoreConcepts/Dockerfile.dev
+      
     ports:
       - "80:80"
       - "443:443"
     depends_on:
       - mysql
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - DOTNET_USE_POLLING_FILE_WATCHER=1
-      - NUGET_PACKAGES=/.nuget/fallbackpackages
-      - NUGET_FALLBACK_PACKAGES=/.nuget/fallbackpackages
-      - ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS=true
-      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-      - ASPNETCORE_URLS=http://+:80
-      - DOTNET_RUNNING_IN_CONTAINER=true
-      - DOTNET_VERSION=6.0.26
-      - ASPNET_VERSION=6.0.26
+      ASPNETCORE_ENVIRONMENT: Development
+      DOTNET_USE_POLLING_FILE_WATCHER: "1"
+      NUGET_PACKAGES: "/.nuget/fallbackpackages"
+      NUGET_FALLBACK_PACKAGES: "/.nuget/fallbackpackages"
+      ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS: "true"
+      ASPNETCORE_URLS: "http://+:80;http://+:443"
+      DOTNET_RUNNING_IN_CONTAINER: "true"
+      DOTNET_VERSION: "6.0.26"
+      ASPNET_VERSION: "6.0.26"
+    #command: ["dotnet", "NetCoreConcepts.dll"]
+    command: ["dotnet", "watch","run", -v, "--project" , "NetCoreConcepts/NetCoreConcepts.csproj", "--urls", "https://*:443;http://*:80"]
     volumes:
+      - .:/src
+      - /src/obj/
+      - /src/bin/
+      - /src/NetCoreConcepts/obj/
+      - /src/NetCoreConcepts/bin/
+      - ~/.aspnet/https:/https:ro
       - C:\Users\Gamer\vsdbg\vs2017u5:/remote_debugger:rw
       - C:\Users\Gamer\AppData\Roaming\Microsoft\UserSecrets:/root/.microsoft/usersecrets:ro
       - C:\Users\Gamer\AppData\Roaming\ASP.NET\Https:/root/.aspnet/https:ro
       - C:\Users\Gamer\AppData\Roaming\ASP.NET\Https:/home/app/.aspnet/https:ro
       - C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Sdks\Microsoft.Docker.Sdk\tools\TokenService.Proxy\linux-x64\net6.0:/TokenService.Proxy:ro
-    restart: no
+    restart: always
+    
+volumes:
+   mysql_data:
 
     
     

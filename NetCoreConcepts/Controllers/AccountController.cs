@@ -1,15 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using NetCoreConcepts.UtilidadesApi;
+using Negocio;
 using NetCoreConcepts.Models;
-using Newtonsoft.Json;
+using NetCoreConcepts.UtilidadesApi;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using static NetCoreConcepts.Models.LoginModels;
-using NetCoreConcepts.Dal;
-using Negocio;
 
 namespace NetCoreConcepts.Controllers
 {
@@ -17,7 +13,7 @@ namespace NetCoreConcepts.Controllers
     public class AccountController : Controller
     {
         private readonly IConfiguration _config;
-        
+
         UtilidadesApiss utils = new UtilidadesApiss();
         public AccountController(IConfiguration config)
         {
@@ -35,27 +31,27 @@ namespace NetCoreConcepts.Controllers
 
                 usuario = Login.ObtenerUsuario(request.Username);
 
-                if (!(request.Username == usuario.usuario) || !( utils.ComparePassword(request.Password,usuario.contrasena)))
-            {
-                response.Add("Error", "Invalid username or password");
-                return StatusCode(403,response);
-            }
+                if (!(request.Username == usuario.usuario) || !(utils.ComparePassword(request.Password, usuario.contrasena)))
+                {
+                    response.Add("Error", "Invalid username or password");
+                    return StatusCode(403, response);
+                }
 
-            var token = utils.GenerateJwtToken(request.Username, _config);
-            return Ok(new LoginResponse()
-            {
-                access_Token = token,
-                auth = true,
-                id = usuario.usuario_id,
-                correo = usuario.correo
+                var token = utils.GenerateJwtToken(request.Username, _config);
+                return Ok(new LoginResponse()
+                {
+                    access_Token = token,
+                    auth = true,
+                    id = usuario.usuario_id,
+                    correo = usuario.correo
 
-            });
+                });
             }
             catch (Exception ex)
             {
                 utils.createlogFile(ex.Message);
                 response.Add("Error", "Hubo un problema al validar usuario.");
-                return StatusCode(500,response);
+                return StatusCode(500, response);
             }
         }
         [HttpPost]
@@ -68,8 +64,9 @@ namespace NetCoreConcepts.Controllers
 
             try
             {
-                usuario =Login.ObtenerUsuario(usuarioRequest.usuario);
-                if(usuario.nombre_completo == null) {
+                usuario = Login.ObtenerUsuario(usuarioRequest.usuario);
+                if (usuario.nombre_completo == null)
+                {
                     Login.CrearUsuario(usuarioRequest);
                     return Ok(new LoginResponse
                     {
@@ -81,7 +78,7 @@ namespace NetCoreConcepts.Controllers
                 {
                     return Ok();
                 }
-                
+
             }
             catch (Exception ex)
             {
