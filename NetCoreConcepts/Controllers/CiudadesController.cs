@@ -1,16 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NetCoreConcepts.Dal;
-using NetCoreConcepts.Models;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
 using Microsoft.Extensions.Configuration;
-using NetCoreConcepts.Bo;
-using Org.BouncyCastle.Asn1.Ocsp;
 using Negocio;
+using NetCoreConcepts.Models;
 using NetCoreConcepts.UtilidadesApi;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 
 namespace NetCoreConcepts.Controllers
 {
@@ -21,6 +17,8 @@ namespace NetCoreConcepts.Controllers
         Dictionary<string, string> response = new Dictionary<string, string>();
         List<CiudadesModel> ciudadesList = new List<CiudadesModel>();
         UtilidadesApiss utils = new UtilidadesApiss();
+
+
 
         public CiudadesController(IConfiguration config)
         {
@@ -34,7 +32,7 @@ namespace NetCoreConcepts.Controllers
         public IActionResult ListarCiudades(UsuarioRequest request)
         {
             CiudadesBo bo = new CiudadesBo(_config);
-            
+
             try
             {
                 ciudadesList = bo.ObtenerCiudades(request);

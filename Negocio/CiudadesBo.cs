@@ -1,20 +1,14 @@
 ﻿using Datos;
-using ExcelDataReader;
 using Microsoft.Extensions.Configuration;
-using NetCoreConcepts.Dal;
 using NetCoreConcepts.Models;
 using NetCoreConcepts.UtilidadesApi;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Negocio
 {
     public class CiudadesBo
     {
+
         UtilidadesApiss utils = new UtilidadesApiss();
 
         private readonly IConfiguration _config;

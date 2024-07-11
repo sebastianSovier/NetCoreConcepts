@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
-using MySqlX.XDevAPI;
 using NetCoreConcepts.Models;
 using NetCoreConcepts.UtilidadesApi;
 using System.Data;
@@ -29,7 +28,14 @@ namespace NetCoreConcepts.Dal
                 cmd.Connection = conexion;
                 cmd.CommandText = "p_listar_paises";
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@p_usuario_id", usuario_id);
+                if (usuario_id > 0)
+                {
+                    cmd.Parameters.AddWithValue("@p_usuario_id", usuario_id);
+                }
+                else
+                {
+                    cmd.Parameters.AddWithValue("@p_usuario_id", null);
+                }
                 cmd.Parameters["@p_usuario_id"].Direction = ParameterDirection.Input;
 
                 using MySqlDataReader reader = cmd.ExecuteReader();

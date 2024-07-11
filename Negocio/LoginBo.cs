@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using NetCoreConcepts.Dal;
 using NetCoreConcepts.Models;
-using static NetCoreConcepts.Models.LoginModels;
 
 namespace Negocio
 {
@@ -21,15 +20,15 @@ namespace Negocio
 
         public UsuarioModels ObtenerUsuario(string userName)
         {
-                UsuarioModels usuario = new UsuarioModels();
-                UsuarioDal usuarioDal = new UsuarioDal(_config);
-                usuario = usuarioDal.ObtenerUsuario(userName);
-                return usuario;
+            UsuarioModels usuario = new UsuarioModels();
+            UsuarioDal usuarioDal = new UsuarioDal(_config);
+            usuario = usuarioDal.ObtenerUsuario(userName);
+            return usuario;
 
         }
         public List<UsuarioModels> ObtenerTodosUsuarios()
         {
-            List<UsuarioModels> usuario = new ();
+            List<UsuarioModels> usuario = new();
             UsuarioDal usuarioDal = new UsuarioDal(_config);
             usuario = usuarioDal.ObtenerTodosUsuarios();
             return usuario;
@@ -41,7 +40,7 @@ namespace Negocio
 
             usuarioDal.CrearUsuario(usuarioRequest);
 
-            
+
         }
     }
 }

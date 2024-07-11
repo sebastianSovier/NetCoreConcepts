@@ -51,10 +51,14 @@ services:
     command: ["dotnet", "watch","run", -v, "--project" , "NetCoreConcepts/NetCoreConcepts.csproj", "--urls", "https://*:443;http://*:80"]
     volumes:
       - .:/src
-      - /src/obj/
-      - /src/bin/
-      - /src/NetCoreConcepts/obj/
-      - /src/NetCoreConcepts/bin/
+      - /src/NetCoreConcepts/obj
+      - /src/NetCoreConcepts/bin 
+      - /src/Datos/obj
+      - /src/Datos/bin   
+      - /src/Negocio/obj
+      - /src/Negocio/bin
+      - /src/Utilidades/obj
+      - /src/Utilidades/bin    
       - ~/.aspnet/https:/https:ro
       - C:\Users\Gamer\vsdbg\vs2017u5:/remote_debugger:rw
       - C:\Users\Gamer\AppData\Roaming\Microsoft\UserSecrets:/root/.microsoft/usersecrets:ro
