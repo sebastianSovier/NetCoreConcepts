@@ -1,21 +1,11 @@
 ﻿using Datos;
-using ExcelDataReader;
 using Microsoft.Extensions.Configuration;
-using MySql.Data.MySqlClient;
-using Mysqlx.Expr;
 using Negocio;
 using NetCoreConcepts.Dal;
 using NetCoreConcepts.Models;
 using NetCoreConcepts.UtilidadesApi;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static NetCoreConcepts.Models.LoginModels;
-using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace NetCoreConcepts.Bo
 {
@@ -37,9 +27,19 @@ namespace NetCoreConcepts.Bo
 
             if (usuario != null)
             {
-                List<PaisesModel> paises = paisesDal.ObtenerPaises(usuario.usuario_id);
+                if (usuario.usuario!.Equals("admin"))
+                {
+                    List<PaisesModel> paises = paisesDal.ObtenerPaises(0);
 
-                return paises;
+                    return paises;
+                }
+                else
+                {
+                    List<PaisesModel> paises = paisesDal.ObtenerPaises(usuario.usuario_id);
+
+                    return paises;
+                }
+
             }
             else
             {

@@ -10,6 +10,10 @@ COPY ["Datos/Datos.csproj", "Datos/"]
 COPY ["Utilidades/Utilidades.csproj", "Utilidades/"]
 
 RUN dotnet restore "NetCoreConcepts/NetCoreConcepts.csproj"
+RUN dotnet restore "Models/Models.csproj"
+RUN dotnet restore "Negocio/Negocio.csproj"
+RUN dotnet restore "Datos/Datos.csproj"
+RUN dotnet restore "Utilidades/Utilidades.csproj"
 
 # Copy remaining source files and publish
 COPY . .

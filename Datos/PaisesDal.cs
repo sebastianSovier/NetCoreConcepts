@@ -48,6 +48,7 @@ namespace NetCoreConcepts.Dal
                     paises.nombre_pais = reader["nombre_pais"].ToString();
                     paises.capital = reader["capital"].ToString();
                     paises.region = reader["region"].ToString();
+                    paises.usuario = reader["usuario"].ToString();
                     paises.poblacion = reader["poblacion"].ToString();
                     paises.fecha_registro = (DateTime?)reader["fecha_registro"];
                     listPaises.Add(paises);
