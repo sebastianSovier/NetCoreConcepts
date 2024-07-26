@@ -7,6 +7,7 @@ using NetCoreConcepts.UtilidadesApi;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using Utilidades;
 
 namespace NetCoreConcepts.Controllers
 {
@@ -29,6 +30,7 @@ namespace NetCoreConcepts.Controllers
         [Authorize()]
         [HttpPost]
         [Route("Ciudades/CiudadesPais")]
+        [TypeFilter(typeof(FilterSessionAttribute))]
         public IActionResult ListarCiudades(UsuarioRequest request)
         {
             CiudadesBo bo = new CiudadesBo(_config);
@@ -49,6 +51,7 @@ namespace NetCoreConcepts.Controllers
         [Authorize()]
         [HttpPost]
         [Route("Ciudades/IngresarCiudad")]
+        [TypeFilter(typeof(FilterSessionAttribute))]
         public IActionResult IngresarCiudad(CiudadesModel ciudadRequest)
         {
             CiudadesBo bo = new CiudadesBo(_config);
@@ -68,6 +71,7 @@ namespace NetCoreConcepts.Controllers
         [Authorize()]
         [HttpPost]
         [Route("Ciudades/GetDataFromExcel")]
+        [TypeFilter(typeof(FilterSessionAttribute))]
         public IActionResult GetDataFromExcel([FromBody] ExcelDataRequest request)
         {
             CiudadesBo bo = new CiudadesBo(_config);
@@ -87,6 +91,7 @@ namespace NetCoreConcepts.Controllers
         [Authorize()]
         [HttpPost]
         [Route("Ciudades/ModificarCiudad")]
+        [TypeFilter(typeof(FilterSessionAttribute))]
         public IActionResult ModificarCiudad(CiudadesModel ciudadRequest)
         {
             CiudadesBo bo = new CiudadesBo(_config);
@@ -107,6 +112,7 @@ namespace NetCoreConcepts.Controllers
         [Authorize()]
         [HttpPost]
         [Route("Ciudades/EliminarCiudad")]
+        [TypeFilter(typeof(FilterSessionAttribute))]
         public IActionResult EliminarCiudad(CiudadesModel ciudadRequest)
         {
             CiudadesBo bo = new CiudadesBo(_config);

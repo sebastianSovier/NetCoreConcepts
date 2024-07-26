@@ -3,22 +3,18 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Utilidades;
 
 namespace NetCoreConcepts
 {
@@ -36,10 +32,10 @@ namespace NetCoreConcepts
         {
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
 
-             services.AddHttpsRedirection(options =>
-              {
-                  options.HttpsPort = 443;
-                 });
+            services.AddHttpsRedirection(options =>
+             {
+                 options.HttpsPort = 443;
+             });
 
             /* services.Configure<HstsOptions>(options =>
              {
@@ -81,12 +77,13 @@ namespace NetCoreConcepts
                 });
             });
             services.AddControllers();
-            
-           
+
+            services.AddScoped<FilterSessionAttribute>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "NetCoreConcepts", Version = "v1" });
             });
+
 
         }
         public static string GetTokenFromHeader(IHeaderDictionary requestHeaders)
@@ -148,13 +145,13 @@ namespace NetCoreConcepts
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseCors("AllowSpecificOrigin");
-            
-            
+
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
-     
+
 
 
         }

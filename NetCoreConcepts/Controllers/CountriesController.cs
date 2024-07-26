@@ -2,14 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using NetCoreConcepts.Bo;
-using NetCoreConcepts.Dal;
 using NetCoreConcepts.Models;
 using NetCoreConcepts.UtilidadesApi;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using static NetCoreConcepts.Models.LoginModels;
+using Utilidades;
 
 namespace NetCoreConcepts.Controllers
 {
@@ -29,6 +27,7 @@ namespace NetCoreConcepts.Controllers
         [Authorize()]
         [HttpPost]
         [Route("Countries/TodosLosPaises")]
+        [TypeFilter(typeof(FilterSessionAttribute))]
         public IActionResult TodosLosPaises(UsuarioRequest request)
         {
             PaisesBo bo = new PaisesBo(_config);
@@ -66,6 +65,8 @@ namespace NetCoreConcepts.Controllers
         [Authorize()]
         [HttpPost]
         [Route("Countries/ObtenerPaisesPorFechas")]
+        [TypeFilter(typeof(FilterSessionAttribute))]
+        [TypeFilter(typeof(FilterSessionAttribute))]
         public IActionResult ObtenerPaisesPorFechas(UsuarioRequest request)
         {
             PaisesBo bo = new PaisesBo(_config);
@@ -85,6 +86,7 @@ namespace NetCoreConcepts.Controllers
         [Authorize()]
         [HttpPost]
         [Route("Countries/GetExcelPaises")]
+        [TypeFilter(typeof(FilterSessionAttribute))]
         public IActionResult GetExcelPaises(UsuarioRequest request)
         {
             PaisesBo bo = new PaisesBo(_config);
@@ -104,6 +106,7 @@ namespace NetCoreConcepts.Controllers
         [Authorize()]
         [HttpPost]
         [Route("Countries/GetDataFromExcel")]
+        [TypeFilter(typeof(FilterSessionAttribute))]
         public IActionResult GetDataFromExcel([FromBody] ExcelDataRequest request)
         {
             PaisesBo bo = new PaisesBo(_config);
@@ -125,6 +128,7 @@ namespace NetCoreConcepts.Controllers
         [Authorize()]
         [HttpPost]
         [Route("Countries/IngresarPais")]
+        [TypeFilter(typeof(FilterSessionAttribute))]
         public IActionResult IngresarPais(PaisesModel paisRequest)
         {
             PaisesBo bo = new PaisesBo(_config);
@@ -144,6 +148,7 @@ namespace NetCoreConcepts.Controllers
         [Authorize()]
         [HttpPost]
         [Route("Countries/ModificarPais")]
+        [TypeFilter(typeof(FilterSessionAttribute))]
         public IActionResult ModificarPais(PaisesModel paisRequest)
         {
             PaisesBo bo = new PaisesBo(_config);
@@ -165,6 +170,7 @@ namespace NetCoreConcepts.Controllers
         [Authorize()]
         [HttpPost]
         [Route("Countries/EliminarPais")]
+        [TypeFilter(typeof(FilterSessionAttribute))]
         public IActionResult EliminarPais(PaisesModel request)
         {
             PaisesBo bo = new PaisesBo(_config);

@@ -18,6 +18,7 @@ services:
       MYSQL_DATABASE: bdpaises
       MYSQL_USER: secros
       MYSQL_PASSWORD: sovier
+      TZ: 'America/Santiago'
     ports:
       - "3306:3306"
     restart: always

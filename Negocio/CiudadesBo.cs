@@ -9,7 +9,7 @@ namespace Negocio
     public class CiudadesBo
     {
 
-        UtilidadesApiss utils = new UtilidadesApiss();
+        private UtilidadesApiss utils = new UtilidadesApiss();
 
         private readonly IConfiguration _config;
 
@@ -25,8 +25,23 @@ namespace Negocio
         public List<CiudadesModel>? ObtenerCiudades(UsuarioRequest request)
         {
             CiudadesDal ciudadesDal = new CiudadesDal(_config);
-            List<CiudadesModel> ciudades = ciudadesDal.ObtenerCiudades(request.pais_id);
-            return ciudades;
+            LoginBo Login = new LoginBo(_config);
+            SessionModels sessionReq = new SessionModels();
+            ;
+            sessionReq.usuario_id = Login.ObtenerUsuario(request.usuario!).usuario_id;
+            SessionModels session = Login.ObtenerSessionUsuario(sessionReq);
+            if (session.user_activo!.Equals("ACTIVO") && !utils.validTimeSession(session.fecha_actividad!))
+            {
+                Login.UpdateSessionUser(session);
+                List<CiudadesModel> ciudades = ciudadesDal.ObtenerCiudades(request.pais_id);
+                return ciudades;
+
+            }
+            else
+            {
+                return null;
+            }
+
 
         }
         public List<CiudadesModel>? InsertarCiudad(CiudadesModel request)

@@ -1,12 +1,9 @@
-﻿using BCrypt.Net;
-using ExcelDataReader;
+﻿using ExcelDataReader;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
-using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace NetCoreConcepts.UtilidadesApi
@@ -98,6 +95,23 @@ namespace NetCoreConcepts.UtilidadesApi
             var result = reader.AsDataSet();
             DataTable dataExcel = result.Tables[0];
             return dataExcel;
+        }
+        public bool validTimeSession(string fecha_actividad)
+        {
+
+            DateTime utcTime = DateTime.UtcNow;
+            TimeZoneInfo chileTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Pacific SA Standard Time");
+            DateTime chileTime = TimeZoneInfo.ConvertTimeFromUtc(utcTime, chileTimeZone);
+            TimeSpan timeDifference = chileTime - DateTime.Parse(fecha_actividad!);
+            double minutesPassed = timeDifference.TotalMinutes;
+            if (minutesPassed > 5)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
