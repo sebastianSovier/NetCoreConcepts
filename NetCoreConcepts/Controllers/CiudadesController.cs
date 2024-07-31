@@ -17,7 +17,7 @@ namespace NetCoreConcepts.Controllers
         private readonly IConfiguration _config;
         Dictionary<string, string> response = new Dictionary<string, string>();
         List<CiudadesModel> ciudadesList = new List<CiudadesModel>();
-        UtilidadesApiss utils = new UtilidadesApiss();
+        private UtilidadesApiss utils = new UtilidadesApiss();
 
 
 

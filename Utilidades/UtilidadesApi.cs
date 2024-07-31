@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -50,19 +51,49 @@ namespace NetCoreConcepts.UtilidadesApi
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        public int? ValidateToken(string token, IConfiguration _config)
+        {
+            if (token == null)
+                return null;
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_config["JwtKey"]!);
+            try
+            {
+                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+
+                var jwtToken = (JwtSecurityToken)validatedToken;
+                var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
+
+                // return user id from JWT token if validation successful
+                return userId;
+            }
+            catch
+            {
+                // return null if validation fails
+                return null;
+            }
+        }
         public void createlogFile(string logMessage)
         {
-            /* File.Delete("Log//Log-" + DateTime.Now.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture) + ".txt");
-             using (StreamWriter w = File.AppendText("Log//Log-"+DateTime.Now.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture) +".txt"))
-             {
-                 WriteLog(logMessage, w);
-             }
+            using (StreamWriter w = File.AppendText("Log//Log-" + DateTime.Now.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture) + ".txt"))
+            {
+                WriteLog(logMessage, w);
+            }
 
-             using (StreamReader r = File.OpenText("Log//Log-" + DateTime.Now.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture) + ".txt"))
-             {*/
-            //ImprmLog(r);
-            Console.WriteLine(logMessage);
-            //}
+            using (StreamReader r = File.OpenText("Log//Log-" + DateTime.Now.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture) + ".txt"))
+            {
+                ImprmLog(r);
+                Console.WriteLine(logMessage);
+            }
         }
         public static void WriteLog(string logMessage, TextWriter w)
         {
@@ -104,10 +135,14 @@ namespace NetCoreConcepts.UtilidadesApi
             DateTime chileTime = TimeZoneInfo.ConvertTimeFromUtc(utcTime, chileTimeZone);
             TimeSpan timeDifference = chileTime - DateTime.Parse(fecha_actividad!);
             double minutesPassed = timeDifference.TotalMinutes;
-            if (minutesPassed > 5)
+            double secondsPassed = timeDifference.TotalSeconds;
+            if (minutesPassed > 5 || (minutesPassed == 5 && secondsPassed > 0))
             {
                 return true;
             }
+
+
+
             else
             {
                 return false;

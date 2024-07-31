@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Negocio;
 using NetCoreConcepts.Models;
@@ -9,17 +10,19 @@ using static NetCoreConcepts.Models.LoginModels;
 
 namespace NetCoreConcepts.Controllers
 {
+    [Authorize]
     [ApiController]
     public class AccountController : Controller
     {
         private readonly IConfiguration _config;
 
-        UtilidadesApiss utils = new UtilidadesApiss();
+        private UtilidadesApiss utils = new UtilidadesApiss();
         public AccountController(IConfiguration config)
         {
             _config = config;
         }
         [HttpPost]
+        [AllowAnonymous]
         [Route("Account/Login")]
         public IActionResult Login(LoginRequest request)
         {
@@ -30,7 +33,6 @@ namespace NetCoreConcepts.Controllers
             {
 
                 usuario = Login.ObtenerUsuario(request.Username);
-
                 if (!(request.Username == usuario.usuario) || !(utils.ComparePassword(request.Password, usuario.contrasena)))
                 {
                     response.Add("Error", "Invalid username or password");
@@ -74,6 +76,7 @@ namespace NetCoreConcepts.Controllers
                 return StatusCode(500, response);
             }
         }
+        [AllowAnonymous]
         [HttpPost]
         [Route("Account/IngresarUsuario")]
         public IActionResult IngresarUsuario(UsuarioModels usuarioRequest)
@@ -84,6 +87,7 @@ namespace NetCoreConcepts.Controllers
 
             try
             {
+
                 usuario = Login.ObtenerUsuario(usuarioRequest.usuario);
                 if (usuario.nombre_completo == null)
                 {
@@ -131,6 +135,7 @@ namespace NetCoreConcepts.Controllers
         }
 
         [HttpPost]
+        [Authorize()]
         [Route("Session/ActualizarSession")]
         public IActionResult ActualizarSession(SessionModels usuarioRequest)
         {

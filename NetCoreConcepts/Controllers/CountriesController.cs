@@ -17,7 +17,7 @@ namespace NetCoreConcepts.Controllers
         private readonly IConfiguration _config;
         Dictionary<string, string> response = new Dictionary<string, string>();
         List<PaisesModel> countriesList = new List<PaisesModel>();
-        UtilidadesApiss utils = new UtilidadesApiss();
+        private UtilidadesApiss utils = new UtilidadesApiss();
 
         public CountriesController(IConfiguration config)
         {
