@@ -1,4 +1,6 @@
 ﻿
+using Models;
+
 namespace NetCoreConcepts.Models
 {
     public class LoginModels
@@ -19,7 +21,7 @@ namespace NetCoreConcepts.Models
             public string? correo { get; set; }
         }
     }
-    public class UsuarioModels
+    public class UsuarioModels : IUsuarioValidation
     {
 
         public Int64 usuario_id { get; set; }
@@ -29,7 +31,7 @@ namespace NetCoreConcepts.Models
         public string? correo { get; set; }
 
     }
-    public class SessionModels
+    public class SessionModels : IUsuarioValidation
     {
         public string? usuario { get; set; }
         public Int64 session_id { get; set; }

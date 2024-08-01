@@ -1,4 +1,6 @@
 ﻿
+using Models;
+
 namespace NetCoreConcepts.Models
 {
     public class CountriesModel
@@ -9,7 +11,7 @@ namespace NetCoreConcepts.Models
         public string? population { get; set; }
 
     }
-    public class PaisesModel
+    public class PaisesModel : IUsuarioValidation
     {
         public Int64 pais_id { get; set; }
         public string? nombre_pais { get; set; }
@@ -25,7 +27,7 @@ namespace NetCoreConcepts.Models
     {
         public List<List<PaisesModelCiudades>>? list { get; set; }
     }
-    public class PaisesModelCiudades
+    public class PaisesModelCiudades : IUsuarioValidation
     {
         public Int64 pais_id { get; set; }
         public string? nombre_pais { get; set; }
@@ -65,7 +67,7 @@ namespace NetCoreConcepts.Models
         public string? longitud { get; set; }
         public string? usuario { get; set; }
     }
-    public class UsuarioRequest
+    public class UsuarioRequest : IUsuarioValidation
     {
         public string? usuario { get; set; }
         public string? fecha_desde { get; set; }
@@ -73,11 +75,15 @@ namespace NetCoreConcepts.Models
         public Int64 pais_id { get; set; }
     }
 
-    public class ExcelDataRequest
+    public class ExcelDataRequest : IUsuarioValidation
     {
         public string? base64string { get; set; }
         public string? usuario { get; set; }
 
         public long pais_id { get; set; }
+    }
+    public class UsuarioValidation : IUsuarioValidation
+    {
+        public string? usuario { get; set; }
     }
 }

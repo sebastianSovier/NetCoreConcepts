@@ -52,12 +52,12 @@ namespace NetCoreConcepts.Controllers
         [HttpPost]
         [Route("Ciudades/IngresarCiudad")]
         [TypeFilter(typeof(FilterSessionAttribute))]
-        public IActionResult IngresarCiudad(CiudadesModel ciudadRequest)
+        public IActionResult IngresarCiudad(CiudadesModel request)
         {
             CiudadesBo bo = new CiudadesBo(_config);
             try
             {
-                ciudadesList = bo.InsertarCiudad(ciudadRequest);
+                ciudadesList = bo.InsertarCiudad(request);
                 return Ok(JsonConvert.SerializeObject(ciudadesList));
 
             }
@@ -92,12 +92,12 @@ namespace NetCoreConcepts.Controllers
         [HttpPost]
         [Route("Ciudades/ModificarCiudad")]
         [TypeFilter(typeof(FilterSessionAttribute))]
-        public IActionResult ModificarCiudad(CiudadesModel ciudadRequest)
+        public IActionResult ModificarCiudad(CiudadesModel request)
         {
             CiudadesBo bo = new CiudadesBo(_config);
             try
             {
-                ciudadesList = bo.ModificarCiudad(ciudadRequest);
+                ciudadesList = bo.ModificarCiudad(request);
                 return Ok(JsonConvert.SerializeObject(ciudadesList));
 
             }
@@ -113,12 +113,12 @@ namespace NetCoreConcepts.Controllers
         [HttpPost]
         [Route("Ciudades/EliminarCiudad")]
         [TypeFilter(typeof(FilterSessionAttribute))]
-        public IActionResult EliminarCiudad(CiudadesModel ciudadRequest)
+        public IActionResult EliminarCiudad(CiudadesModel request)
         {
             CiudadesBo bo = new CiudadesBo(_config);
             try
             {
-                ciudadesList = bo.EliminarCiudad(ciudadRequest);
+                ciudadesList = bo.EliminarCiudad(request);
                 return Ok(JsonConvert.SerializeObject(ciudadesList));
 
             }

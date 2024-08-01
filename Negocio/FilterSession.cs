@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
+using Models;
 using Negocio;
 using NetCoreConcepts.Models;
 using NetCoreConcepts.UtilidadesApi;
@@ -19,9 +20,12 @@ namespace Utilidades
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             // Aquí puedes acceder a los parámetros de la acción
-            UsuarioRequest? parameter = context.ActionArguments["request"] as UsuarioRequest;
+            IUsuarioValidation? parameter = context.ActionArguments
+       .Values
+       .OfType<IUsuarioValidation>()
+       .FirstOrDefault();
 
-            if (!IsValid(parameter?.usuario!))
+            if (parameter == null || !IsValid(parameter.usuario!))
             {
                 // Aquí puedes establecer una respuesta de error
                 context.Result = new Microsoft.AspNetCore.Mvc.BadRequestObjectResult("Sesion Expirada , Inicie Sesion nuevamente.");

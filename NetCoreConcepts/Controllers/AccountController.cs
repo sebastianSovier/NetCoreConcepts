@@ -12,7 +12,7 @@ namespace NetCoreConcepts.Controllers
 {
     [Authorize]
     [ApiController]
-    public class AccountController : Controller
+    public class AccountController : ControllerBase
     {
         private readonly IConfiguration _config;
 
@@ -79,7 +79,7 @@ namespace NetCoreConcepts.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("Account/IngresarUsuario")]
-        public IActionResult IngresarUsuario(UsuarioModels usuarioRequest)
+        public IActionResult IngresarUsuario(UsuarioModels request)
         {
             LoginBo Login = new LoginBo(_config);
             var response = new Dictionary<string, string>();
@@ -88,10 +88,10 @@ namespace NetCoreConcepts.Controllers
             try
             {
 
-                usuario = Login.ObtenerUsuario(usuarioRequest.usuario);
+                usuario = Login.ObtenerUsuario(request.usuario);
                 if (usuario.nombre_completo == null)
                 {
-                    Login.CrearUsuario(usuarioRequest);
+                    Login.CrearUsuario(request);
                     return Ok(new LoginResponse
                     {
                         auth = true
@@ -113,7 +113,7 @@ namespace NetCoreConcepts.Controllers
         }
         [HttpPost]
         [Route("Session/CrearSession")]
-        public IActionResult CrearSession(SessionModels usuarioRequest)
+        public IActionResult CrearSession(SessionModels request)
         {
             LoginBo Login = new LoginBo(_config);
             var response = new Dictionary<string, string>();
@@ -121,7 +121,7 @@ namespace NetCoreConcepts.Controllers
 
             try
             {
-                Login.CrearSession(usuarioRequest);
+                Login.CrearSession(request);
                 return Ok();
 
 
@@ -137,14 +137,14 @@ namespace NetCoreConcepts.Controllers
         [HttpPost]
         [Authorize()]
         [Route("Session/ActualizarSession")]
-        public IActionResult ActualizarSession(SessionModels usuarioRequest)
+        public IActionResult ActualizarSession(SessionModels request)
         {
             LoginBo Login = new LoginBo(_config);
             var response = new Dictionary<string, string>();
 
             try
             {
-                Login.UpdateSessionLogoutUser(usuarioRequest);
+                Login.UpdateSessionLogoutUser(request);
                 return Ok();
 
 
@@ -177,6 +177,7 @@ namespace NetCoreConcepts.Controllers
             }
         }
         [HttpPost]
+        [AllowAnonymous]
         [Route("Session/CierreSessionesInactivas")]
         public IActionResult CierreSessionesInactivas()
         {

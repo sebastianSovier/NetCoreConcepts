@@ -129,12 +129,12 @@ namespace NetCoreConcepts.Controllers
         [HttpPost]
         [Route("Countries/IngresarPais")]
         [TypeFilter(typeof(FilterSessionAttribute))]
-        public IActionResult IngresarPais(PaisesModel paisRequest)
+        public IActionResult IngresarPais(PaisesModel request)
         {
             PaisesBo bo = new PaisesBo(_config);
             try
             {
-                countriesList = bo.IngresarPais(paisRequest);
+                countriesList = bo.IngresarPais(request);
                 return Ok(JsonConvert.SerializeObject(countriesList));
 
             }
@@ -149,12 +149,12 @@ namespace NetCoreConcepts.Controllers
         [HttpPost]
         [Route("Countries/ModificarPais")]
         [TypeFilter(typeof(FilterSessionAttribute))]
-        public IActionResult ModificarPais(PaisesModel paisRequest)
+        public IActionResult ModificarPais(PaisesModel request)
         {
             PaisesBo bo = new PaisesBo(_config);
             try
             {
-                countriesList = bo.ModificarPais(paisRequest); ;
+                countriesList = bo.ModificarPais(request); ;
                 return Ok(JsonConvert.SerializeObject(countriesList));
 
             }
