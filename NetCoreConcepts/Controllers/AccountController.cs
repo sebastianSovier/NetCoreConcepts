@@ -135,7 +135,7 @@ namespace NetCoreConcepts.Controllers
         }
 
         [HttpPost]
-        [Authorize()]
+        [AllowAnonymous]
         [Route("Session/ActualizarSession")]
         public IActionResult ActualizarSession(SessionModels request)
         {

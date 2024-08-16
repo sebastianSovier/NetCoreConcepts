@@ -56,7 +56,7 @@ namespace NetCoreConcepts.Models
         public string? listPaisesSerialize { get; set; }
         public string? listCiudadesSerialize { get; set; }
     }
-    public class CiudadesModel
+    public class CiudadesModel : IUsuarioValidation
     {
         public Int64 ciudad_id { get; set; }
         public Int64 pais_id { get; set; }
