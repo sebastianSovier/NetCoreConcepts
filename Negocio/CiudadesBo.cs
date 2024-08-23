@@ -26,13 +26,14 @@ namespace Negocio
         {
             CiudadesDal ciudadesDal = new CiudadesDal(_config);
             LoginBo Login = new LoginBo(_config);
+            SessionBo Session = new SessionBo(_config);
             SessionModels sessionReq = new SessionModels();
             ;
             sessionReq.usuario_id = Login.ObtenerUsuario(request.usuario!).usuario_id;
-            SessionModels session = Login.ObtenerSessionUsuario(sessionReq);
+            SessionModels session = Session.ObtenerSessionUsuario(sessionReq);
             if (session.user_activo!.Equals("ACTIVO") && !utils.validTimeSession(session.fecha_actividad!))
             {
-                Login.UpdateSessionUser(session);
+                Session.UpdateSessionUser(session);
                 List<CiudadesModel> ciudades = ciudadesDal.ObtenerCiudades(request.pais_id);
                 return ciudades;
 

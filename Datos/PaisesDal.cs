@@ -163,7 +163,7 @@ namespace NetCoreConcepts.Dal
             {
                 MySqlCommand cmd = new MySqlCommand();
                 cmd.Connection = conexion;
-                cmd.CommandText = "INSERT INTO `bdpaises`.`Paises` (`nombre_pais`, `capital`, `region`, `poblacion`,`usuario_id`) VALUES (?nombre_pais, ?capital, ?region, ?poblacion,?usuario_id);";
+                cmd.CommandText = "INSERT INTO `bdpaises`.`Pais` (`nombre_pais`, `capital`, `region`, `poblacion`,`usuario_id`) VALUES (?nombre_pais, ?capital, ?region, ?poblacion,?usuario_id);";
 
                 cmd.Parameters.Add("?nombre_pais", MySqlDbType.VarChar).Value = paisRequest.nombre_pais;
                 cmd.Parameters.Add("?capital", MySqlDbType.VarChar).Value = paisRequest.capital;
@@ -192,7 +192,7 @@ namespace NetCoreConcepts.Dal
             {
                 MySqlCommand cmd = new MySqlCommand();
                 cmd.Connection = conexion;
-                cmd.CommandText = "UPDATE `bdpaises`.`Paises` set nombre_pais = ?nombre_pais, capital = ?capital, region = ?region, poblacion = ?poblacion where pais_id = ?pais_id";
+                cmd.CommandText = "UPDATE `bdpaises`.`Pais` set nombre_pais = ?nombre_pais, capital = ?capital, region = ?region, poblacion = ?poblacion where pais_id = ?pais_id";
                 cmd.Parameters.Add("?pais_id", MySqlDbType.VarChar).Value = paisRequest.pais_id;
                 cmd.Parameters.Add("?nombre_pais", MySqlDbType.VarChar).Value = paisRequest.nombre_pais;
                 cmd.Parameters.Add("?capital", MySqlDbType.VarChar).Value = paisRequest.capital;
@@ -222,7 +222,7 @@ namespace NetCoreConcepts.Dal
 
                 MySqlCommand cmd = new MySqlCommand();
                 cmd.Connection = conexion;
-                cmd.CommandText = "Delete from `bdpaises`.`Paises` where pais_id = ?pais_id ";
+                cmd.CommandText = "Delete from `bdpaises`.`Pais` where pais_id = ?pais_id ";
 
                 cmd.Parameters.Add("?pais_id", MySqlDbType.VarChar).Value = pais_id;
 

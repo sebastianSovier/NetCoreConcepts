@@ -27,13 +27,17 @@ namespace NetCoreConcepts.Controllers
         public IActionResult Login(LoginRequest request)
         {
             LoginBo Login = new LoginBo(_config);
+            SessionBo Sesion = new SessionBo(_config);
+            PasswordBo Password = new PasswordBo(_config);
             var response = new Dictionary<string, string>();
             UsuarioModels usuario = new UsuarioModels();
+            PasswordModels password = new PasswordModels();
             try
             {
 
                 usuario = Login.ObtenerUsuario(request.Username);
-                if (!(request.Username == usuario.usuario) || !(utils.ComparePassword(request.Password, usuario.contrasena)))
+                password = Password.ObtenerPassword(usuario.usuario_id.ToString());
+                if (!(request.Username == usuario.usuario) || !(utils.ComparePassword(request.Password, password.password)))
                 {
                     response.Add("Error", "Invalid username or password");
                     return StatusCode(403, response);
@@ -41,7 +45,7 @@ namespace NetCoreConcepts.Controllers
                 SessionModels req = new SessionModels();
                 req.usuario = usuario.usuario;
                 req.usuario_id = usuario.usuario_id;
-                SessionModels session = Login.ObtenerSessionUsuario(req);
+                SessionModels session = Sesion.ObtenerSessionUsuario(req);
                 if (session.usuario_id > 0)
                 {
                     if (session.user_activo.Equals("ACTIVO"))
@@ -52,12 +56,12 @@ namespace NetCoreConcepts.Controllers
                     else
                     {
                         req.user_activo = "ACTIVO";
-                        Login.UpdateSessionUser(req);
+                        Sesion.UpdateSessionUser(req);
                     }
                 }
                 else
                 {
-                    Login.CrearSession(req);
+                    Sesion.CrearSession(req);
                 }
                 string token = utils.GenerateJwtToken(request.Username, _config);
                 return Ok(new LoginResponse()
@@ -82,6 +86,7 @@ namespace NetCoreConcepts.Controllers
         public IActionResult IngresarUsuario(UsuarioModels request)
         {
             LoginBo Login = new LoginBo(_config);
+            PasswordBo Password = new PasswordBo(_config);
             var response = new Dictionary<string, string>();
             UsuarioModels usuario = new UsuarioModels();
 
@@ -92,6 +97,11 @@ namespace NetCoreConcepts.Controllers
                 if (usuario.nombre_completo == null)
                 {
                     Login.CrearUsuario(request);
+                    UsuarioModels usuarioResp = Login.ObtenerUsuario(request.usuario);
+                    PasswordModels passwordRequest = new PasswordModels();
+                    passwordRequest.usuario_id = usuarioResp.usuario_id;
+                    passwordRequest.password = request.contrasena;
+                    Password.CrearPassword(passwordRequest);
                     return Ok(new LoginResponse
                     {
                         auth = true
@@ -100,7 +110,11 @@ namespace NetCoreConcepts.Controllers
                 }
                 else
                 {
-                    return Ok();
+                    return Ok(new LoginResponse
+                    {
+                        auth = false
+
+                    });
                 }
 
             }
@@ -115,13 +129,13 @@ namespace NetCoreConcepts.Controllers
         [Route("Session/CrearSession")]
         public IActionResult CrearSession(SessionModels request)
         {
-            LoginBo Login = new LoginBo(_config);
+            SessionBo Sesion = new SessionBo(_config);
             var response = new Dictionary<string, string>();
             UsuarioModels usuario = new UsuarioModels();
 
             try
             {
-                Login.CrearSession(request);
+                Sesion.CrearSession(request);
                 return Ok();
 
 
@@ -129,7 +143,7 @@ namespace NetCoreConcepts.Controllers
             catch (Exception ex)
             {
                 utils.createlogFile(ex.Message);
-                response.Add("Error", "Hubo un problema al crear usuario.");
+                response.Add("Error", "Hubo un problema al crear sesion.");
                 return StatusCode(500, response);
             }
         }
@@ -139,12 +153,12 @@ namespace NetCoreConcepts.Controllers
         [Route("Session/ActualizarSession")]
         public IActionResult ActualizarSession(SessionModels request)
         {
-            LoginBo Login = new LoginBo(_config);
+            SessionBo Sesion = new SessionBo(_config);
             var response = new Dictionary<string, string>();
 
             try
             {
-                Login.UpdateSessionLogoutUser(request);
+                Sesion.UpdateSessionLogoutUser(request);
                 return Ok();
 
 
@@ -152,7 +166,7 @@ namespace NetCoreConcepts.Controllers
             catch (Exception ex)
             {
                 utils.createlogFile(ex.Message);
-                response.Add("Error", "Hubo un problema al crear usuario.");
+                response.Add("Error", "Hubo un problema al actualizar sesion.");
                 return StatusCode(500, response);
             }
         }
@@ -160,11 +174,11 @@ namespace NetCoreConcepts.Controllers
         [Route("Session/ObtenerSession")]
         public IActionResult ObtenerSession(SessionModels usuarioRequest)
         {
-            LoginBo Login = new LoginBo(_config);
+            SessionBo Sesion = new SessionBo(_config);
             var response = new Dictionary<string, string>();
             try
             {
-                SessionModels resp = Login.ObtenerSessionUsuario(usuarioRequest);
+                SessionModels resp = Sesion.ObtenerSessionUsuario(usuarioRequest);
                 return Ok(resp);
 
 
@@ -172,7 +186,7 @@ namespace NetCoreConcepts.Controllers
             catch (Exception ex)
             {
                 utils.createlogFile(ex.Message);
-                response.Add("Error", "Hubo un problema al crear usuario.");
+                response.Add("Error", "Hubo un problema al obtener sesion.");
                 return StatusCode(500, response);
             }
         }
@@ -181,11 +195,11 @@ namespace NetCoreConcepts.Controllers
         [Route("Session/CierreSessionesInactivas")]
         public IActionResult CierreSessionesInactivas()
         {
-            LoginBo Login = new LoginBo(_config);
+            SessionBo Sesion = new SessionBo(_config);
             var response = new Dictionary<string, string>();
             try
             {
-                Login.ObtenerSessionesUsuariosInactivos();
+                Sesion.ObtenerSessionesUsuariosInactivos();
                 return Ok();
 
 
@@ -193,7 +207,103 @@ namespace NetCoreConcepts.Controllers
             catch (Exception ex)
             {
                 utils.createlogFile(ex.Message);
-                response.Add("Error", "Hubo un problema al crear usuario.");
+                response.Add("Error", "Hubo un problema al cerrar sesiones activas.");
+                return StatusCode(500, response);
+            }
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("Account/CodigoRecuperacion")]
+        public IActionResult CodigoRecuperacionPassword(PasswordModels passwordRequest)
+        {
+            PasswordBo Password = new PasswordBo(_config);
+            LoginBo Usuario = new LoginBo(_config);
+            var response = new Dictionary<string, string>();
+            try
+            {
+                UsuarioModels usuario = Usuario.ObtenerUsuario(passwordRequest.usuario);
+
+                if (usuario != null)
+                {
+                    passwordRequest.usuario_id = usuario.usuario_id;
+                    PasswordModels passwordResponse = Password.GenerarCodigoRecuperacion(passwordRequest);
+                    passwordResponse.correo = usuario.correo;
+                    return Ok(passwordResponse);
+                }
+                response.Add("Error", "Usuario no existe");
+                return StatusCode(403, response);
+
+
+            }
+            catch (Exception ex)
+            {
+                utils.createlogFile(ex.Message);
+                response.Add("Error", "Hubo un problema al cerrar sesiones activas.");
+                return StatusCode(500, response);
+            }
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("Account/ValidaCodigo")]
+        public IActionResult ValidaCodigoRecuperacion(PasswordModels passwordRequest)
+        {
+            PasswordBo Password = new PasswordBo(_config);
+            LoginBo Usuario = new LoginBo(_config);
+            var response = new Dictionary<string, string>();
+            try
+            {
+                UsuarioModels usuario = Usuario.ObtenerUsuario(passwordRequest.usuario);
+                PasswordModels passwordResponse = Password.ObtenerPassword(usuario.usuario_id.ToString());
+                if (passwordResponse.cod_recover_password.Equals(passwordRequest.cod_recover_password))
+                {
+                    return Ok(new LoginResponse
+                    {
+                        auth = true
+
+                    });
+                }
+                else
+                {
+                    response.Add("Error", "Codigo invalido");
+                    return StatusCode(403, response);
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                utils.createlogFile(ex.Message);
+                response.Add("Error", "Hubo un problema al cerrar sesiones activas.");
+                return StatusCode(500, response);
+            }
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("Account/CambioPassword")]
+        public IActionResult CambioPassword(PasswordModels passwordRequest)
+        {
+            PasswordBo Password = new PasswordBo(_config);
+            LoginBo Usuario = new LoginBo(_config);
+            var response = new Dictionary<string, string>();
+            try
+            {
+                UsuarioModels usuario = Usuario.ObtenerUsuario(passwordRequest.usuario);
+                PasswordModels passwordResp = Password.ObtenerPassword(usuario.usuario_id.ToString());
+                passwordRequest.usuario_id = usuario.usuario_id;
+                Password.CambioPassword(passwordRequest);
+                return Ok(new LoginResponse
+                {
+                    auth = true
+
+                });
+
+
+            }
+            catch (Exception ex)
+            {
+                utils.createlogFile(ex.Message);
+                response.Add("Error", "Hubo un problema al cerrar sesiones activas.");
                 return StatusCode(500, response);
             }
         }

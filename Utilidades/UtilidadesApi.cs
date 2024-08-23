@@ -148,5 +148,12 @@ namespace NetCoreConcepts.UtilidadesApi
                 return false;
             }
         }
+        public string generateRandomNumber()
+        {
+
+            Random rnd = new Random();
+            Int64 number = rnd.NextInt64(1000000000, 9999999999);
+            return number.ToString();
+        }
     }
 }

@@ -41,4 +41,14 @@ namespace NetCoreConcepts.Models
 
 
     }
+    public class PasswordModels : IUsuarioValidation
+    {
+        public string? password { get; set; }
+        public string? usuario { get; set; }
+        public Int64 password_id { get; set; }
+        public Int64 usuario_id { get; set; }
+        public string? cod_recover_password { get; set; }
+        public string? fecha_registro { get; set; }
+        public string? correo { get; set; }
+    }
 }
