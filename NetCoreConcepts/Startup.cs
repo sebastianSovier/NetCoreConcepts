@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +13,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Utilidades;
 
 namespace NetCoreConcepts
 {
@@ -27,109 +25,95 @@ namespace NetCoreConcepts
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
+            // Configuración JWT
+            ConfigureAuthentication(services);
 
-            services.AddHttpsRedirection(options =>
-             {
-                 options.HttpsPort = 443;
-             });
+            // Configuración de CORS
+            ConfigureCors(services);
 
-            /* services.Configure<HstsOptions>(options =>
-             {
-                 options.Preload = false;
-                 options.IncludeSubDomains = false;
-             });*/
             services.Configure<FormOptions>(options =>
             {
                 options.MultipartBodyLengthLimit = long.MaxValue;
             });
-            services
-                .AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(cfg =>
-                {
-                    cfg.RequireHttpsMetadata = false;
-                    cfg.SaveToken = true;
-                    cfg.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidIssuer = Configuration["JwtIssuer"],
-                        ValidAudience = Configuration["JwtIssuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
-                        ClockSkew = TimeSpan.Zero // remove delay of token when expire
-                    };
-                    cfg.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = ValidateToken
-                    };
-                });
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowSpecificOrigin", builder =>
-                {
-                    builder.WithOrigins("http://localhost:3000").WithMethods("POST").AllowAnyHeader();
-                });
-            });
+
             services.AddControllers();
 
-            services.AddScoped<FilterSessionAttribute>();
+            // Swagger para documentación
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "NetCoreConcepts", Version = "v1" });
             });
-
-
         }
-        public static string GetTokenFromHeader(IHeaderDictionary requestHeaders)
+
+        private void ConfigureAuthentication(IServiceCollection services)
         {
-            if (!requestHeaders.TryGetValue("Authorization", out var authorizationHeader))
-                throw new InvalidOperationException("Authorization token does not exists");
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-            var authorization = authorizationHeader.FirstOrDefault()!.Split(" ");
-
-            var type = authorization[0];
-
-            if (type != "Bearer") throw new InvalidOperationException("You should provide a Bearer token");
-
-            var value = authorization[1] ?? throw new InvalidOperationException("Authorization token does not exists");
-            return value;
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(cfg =>
+            {
+                cfg.RequireHttpsMetadata = false;
+                cfg.SaveToken = true;
+                cfg.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = Configuration["JwtIssuer"],
+                    ValidAudience = Configuration["JwtIssuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
+                    ClockSkew = TimeSpan.Zero
+                };
+                cfg.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = ValidateTokenAsync
+                };
+            });
         }
-        public static Task ValidateToken(MessageReceivedContext context)
+
+        private void ConfigureCors(IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin", builder =>
+                {
+                    builder.WithOrigins(Configuration["AllowedOrigins"]?.Split(",") ?? Array.Empty<string>())
+                           .WithMethods("GET", "POST", "PUT", "DELETE")
+                           .AllowAnyHeader();
+                });
+            });
+        }
+
+        public static Task ValidateTokenAsync(MessageReceivedContext context)
         {
             try
             {
-                context.Token = GetTokenFromHeader(context.Request.Headers);
+                if (!context.Request.Headers.TryGetValue("Authorization", out var authorizationHeader))
+                    throw new InvalidOperationException("Authorization token does not exist");
+
+                var token = authorizationHeader.ToString().Split(" ").Last();
 
                 var tokenHandler = new JwtSecurityTokenHandler();
-                tokenHandler.ValidateToken(context.Token, context.Options.TokenValidationParameters, out var validatedToken);
+                tokenHandler.ValidateToken(token, context.Options.TokenValidationParameters, out var validatedToken);
 
-                var jwtSecurityToken = validatedToken as JwtSecurityToken;
+                var jwtToken = validatedToken as JwtSecurityToken;
+                var claimsIdentity = new ClaimsIdentity(jwtToken.Claims, "JwtBearer");
 
-                context.Principal = new ClaimsPrincipal();
-
-                var claimsIdentity = new ClaimsIdentity(jwtSecurityToken.Claims.ToList(),
-                        "JwtBearerToken", ClaimTypes.NameIdentifier, ClaimTypes.Role);
-                context.Principal.AddIdentity(claimsIdentity);
-
+                context.Principal = new ClaimsPrincipal(claimsIdentity);
                 context.Success();
-
-                return Task.CompletedTask;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                context.Fail(e);
+                context.Fail(ex.Message);
             }
 
             return Task.CompletedTask;
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -139,21 +123,18 @@ namespace NetCoreConcepts
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "NetCoreConcepts v1"));
             }
 
-
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
+
             app.UseCors("AllowSpecificOrigin");
 
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
-
-
-
         }
     }
 }
