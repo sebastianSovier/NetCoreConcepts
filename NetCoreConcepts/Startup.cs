@@ -38,7 +38,7 @@ namespace NetCoreConcepts
             ConfigureCors(services);
             Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()     // Log a la consola
-    .WriteTo.File("logs/myapp.txt", rollingInterval: RollingInterval.Day) // Log a archivo
+    .WriteTo.File("Logs/netCoreConcepts.txt", rollingInterval: RollingInterval.Day) // Log a archivo
     .CreateLogger();
             services.AddLogging(builder =>
             {
