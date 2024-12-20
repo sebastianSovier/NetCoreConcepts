@@ -22,6 +22,8 @@ namespace Negocio
 
         public void CrearSession(SessionModels usuarioRequest)
         {
+            usuarioRequest = util.CleanObject(usuarioRequest);
+
             SessionDal sessionDal = new SessionDal(_config);
 
             sessionDal.CrearSessionUser(usuarioRequest);
@@ -30,6 +32,7 @@ namespace Negocio
         }
         public SessionModels ObtenerSessionUsuario(SessionModels sessionUser)
         {
+            sessionUser = util.CleanObject(sessionUser);
             SessionModels session = new SessionModels();
             SessionDal sessionDal = new SessionDal(_config);
             session = sessionDal.ObtenerSessionByUser(sessionUser);
@@ -55,12 +58,16 @@ namespace Negocio
         }
         public void UpdateSessionUser(SessionModels sessionUser)
         {
+            sessionUser = util.CleanObject(sessionUser);
+
             SessionDal sessionDal = new SessionDal(_config);
             sessionDal.UpdateSessionUser(sessionUser);
 
         }
         public void UpdateSessionLogoutUser(SessionModels sessionUser)
         {
+            sessionUser = util.CleanObject(sessionUser);
+
             SessionDal sessionDal = new SessionDal(_config);
             UsuarioDal usuarioDal = new UsuarioDal(_config);
             UsuarioModels usuario = usuarioDal.ObtenerUsuario(sessionUser.usuario!);

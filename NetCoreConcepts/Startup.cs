@@ -84,8 +84,10 @@ namespace NetCoreConcepts
                     builder.WithOrigins(Configuration["AllowedOrigins"]?.Split(",") ?? Array.Empty<string>())
                            .WithMethods("GET", "POST", "PUT", "DELETE")
                            .AllowAnyHeader();
+
                 });
             });
+
         }
 
         public static Task ValidateTokenAsync(MessageReceivedContext context)

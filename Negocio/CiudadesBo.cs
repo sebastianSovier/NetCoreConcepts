@@ -24,6 +24,7 @@ namespace Negocio
 
         public List<CiudadesModel>? ObtenerCiudades(UsuarioRequest request)
         {
+            request = utils.CleanObject(request);
             CiudadesDal ciudadesDal = new CiudadesDal(_config);
             LoginBo Login = new LoginBo(_config);
             SessionBo Session = new SessionBo(_config);
@@ -47,6 +48,7 @@ namespace Negocio
         }
         public List<CiudadesModel>? InsertarCiudad(CiudadesModel request)
         {
+            request = utils.CleanObject(request);
             CiudadesDal ciudadesDal = new CiudadesDal(_config);
             ciudadesDal.InsertarCiudad(request);
             List<CiudadesModel> ciudades = ciudadesDal.ObtenerCiudades(request.pais_id);
@@ -56,6 +58,7 @@ namespace Negocio
         }
         public List<CiudadesModel>? ModificarCiudad(CiudadesModel request)
         {
+            request = utils.CleanObject(request);
             CiudadesDal ciudadesDal = new CiudadesDal(_config);
 
             ciudadesDal.ModificarCiudad(request);
@@ -66,6 +69,7 @@ namespace Negocio
         }
         public List<CiudadesModel>? EliminarCiudad(CiudadesModel request)
         {
+            request = utils.CleanObject(request);
             CiudadesDal ciudadesDal = new CiudadesDal(_config);
             ciudadesDal.EliminarCiudad(request.ciudad_id);
             List<CiudadesModel> ciudades = ciudadesDal.ObtenerCiudades(request.pais_id);
@@ -75,6 +79,7 @@ namespace Negocio
         }
         public List<CiudadesModel>? ImportarExcel(ExcelDataRequest request)
         {
+            request = utils.CleanObject(request);
             CiudadesDal ciudadesDal = new CiudadesDal(_config);
             LoginBo loginBo = new LoginBo(_config);
 

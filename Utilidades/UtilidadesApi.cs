@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 
@@ -154,6 +155,87 @@ namespace NetCoreConcepts.UtilidadesApi
             Random rnd = new Random();
             Int64 number = rnd.NextInt64(1000000000, 9999999999);
             return number.ToString();
+        }
+        public string LimpiaInyection(string valor)
+        {
+            if (valor != string.Empty)
+            {
+                if (valor != null)
+                {
+                    if (valor != "null")
+                    {
+                        string[] array =
+                        {
+                        "CREATE", "ALTER", "DROP", "TRUNCATE", "INSERT", "UPDATE", "DELETE", "SELECT", "&",
+                        "FROM", "WHERE", "REPLACE", "FUNCTION", "TABLE", "COLUMN", "ROW", "DATABASE",
+                        "%", "!", "$", "(", ")", "'", ":", "[", "]", "{", "}", "+", "*", "=", "#",
+                        "%", "!", "$", "(", ")", "'",
+                        "[", "]", "+", "*", "=", "#",
+                        "DOCTYPE", "applet", "basefont", "body", "button", "frame", "frameset", "head",
+                        "html", "iframe", "img", "input", "label", "object", "script", "style", "table",
+                        "textarea", "title", "javascript", "prompt", "read", "write", "cookie", "&#",
+                        "vbscript", "language", "confirm", "alert", ">", "<", "/", "'\'", "&lt", "&gt",
+                        "msgbox", "USERNAME", "USER_ACCOUNT_URL", " USER_ID", "fromCharCode",
+                        "SRC", "HTTP", "ONLOAD", "TYPE", "TEXT", "stylesheet", "CSS", "HREF", "LINK",
+                        "BACKGROUND", "NAMESPACE", "XML", "DATASRC", "DATAFLD", "CurrentPage", "parameters",
+                        "document", "querySelector", "jquery", "innerHTML", "outerHTML", "parseHTML", "insertAdjacentHTML",
+                        "ONCLICK", "ONMOUSEOVER", "prepend", "wrapAll", "writeln", "QUERY", "showMessage",
+                    };
+
+                        foreach (string s in array)
+                        {
+                            bool b = valor.ToUpper().Contains(s);
+
+                            if (b)
+                            {
+                                valor = valor.Replace(s.ToUpper(), string.Empty);
+                            }
+                        }
+
+                        return valor.Trim();
+                    }
+                    else
+                    {
+                        return valor;
+                    }
+                }
+                else
+                {
+                    return valor!;
+                }
+            }
+            else
+            {
+                return valor;
+            }
+        }
+
+
+        public T CleanObject<T>(T obj)
+            where T : class
+        {
+            Type type = obj.GetType();
+
+            foreach (PropertyInfo property in type.GetProperties())
+            {
+                // Ensure that the property is a string or a type that can be cleaned
+                if (property.PropertyType == typeof(string))
+                {
+                    var currentValue = property.GetValue(obj)?.ToString();
+
+                    if (!string.IsNullOrEmpty(currentValue))
+                    {
+                        // Perform the cleaning operation
+                        var cleanedValue = LimpiaInyection(currentValue);
+
+                        // Set the cleaned value back into the property
+                        property.SetValue(obj, cleanedValue);
+                    }
+                }
+            }
+
+            // Return the modified object
+            return obj;
         }
     }
 }

@@ -29,6 +29,8 @@ namespace Negocio
         }
         public PasswordModels GenerarCodigoRecuperacion(PasswordModels passwordRequest)
         {
+            passwordRequest = util.CleanObject(passwordRequest);
+
             PasswordDal passwordDal = new PasswordDal(_config);
             PasswordModels password = new();
             passwordRequest.cod_recover_password = util.generateRandomNumber();
@@ -39,6 +41,7 @@ namespace Negocio
         }
         public void CambioPassword(PasswordModels passwordRequest)
         {
+            passwordRequest = util.CleanObject(passwordRequest);
             PasswordDal passwordDal = new PasswordDal(_config);
 
             passwordDal.CambioPassword(passwordRequest);
@@ -47,6 +50,7 @@ namespace Negocio
         }
         public void CrearPassword(PasswordModels passwordRequest)
         {
+            passwordRequest = util.CleanObject(passwordRequest);
             PasswordDal passwordDal = new PasswordDal(_config);
 
             passwordDal.CrearPassword(passwordRequest);

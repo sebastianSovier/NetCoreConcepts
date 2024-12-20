@@ -20,6 +20,7 @@ namespace NetCoreConcepts.Bo
         }
         public List<PaisesModel>? ObtenerPaises(UsuarioRequest request)
         {
+            request = utils.CleanObject(request);
             PaisesDal paisesDal = new PaisesDal(_config);
             LoginBo loginBo = new LoginBo(_config);
 
@@ -95,6 +96,7 @@ namespace NetCoreConcepts.Bo
         }
         public List<PaisesModel>? ImportarExcel(ExcelDataRequest request)
         {
+            request = utils.CleanObject(request);
             PaisesDal paisesDal = new PaisesDal(_config);
             LoginBo loginBo = new LoginBo(_config);
 
@@ -145,6 +147,7 @@ namespace NetCoreConcepts.Bo
 
         public List<PaisesModel>? IngresarPais(PaisesModel paisRequest)
         {
+            paisRequest = utils.CleanObject(paisRequest);
             PaisesDal paisesDal = new PaisesDal(_config);
             LoginBo loginBo = new LoginBo(_config);
 
@@ -166,6 +169,8 @@ namespace NetCoreConcepts.Bo
         }
         public List<PaisesModel>? ModificarPais(PaisesModel paisRequest)
         {
+            paisRequest = utils.CleanObject(paisRequest);
+
             PaisesDal paisesDal = new PaisesDal(_config);
             LoginBo loginBo = new LoginBo(_config);
 
@@ -187,6 +192,8 @@ namespace NetCoreConcepts.Bo
         }
         public List<PaisesModel>? EliminarPais(PaisesModel paisRequest)
         {
+            paisRequest = utils.CleanObject(paisRequest);
+
             PaisesDal paisesDal = new PaisesDal(_config);
             LoginBo loginBo = new LoginBo(_config);
 
@@ -208,6 +215,8 @@ namespace NetCoreConcepts.Bo
         }
         public List<PaisesModel>? ObtenerPaisesPorFechas(UsuarioRequest request)
         {
+            request = utils.CleanObject(request);
+
             PaisesDal paisesDal = new PaisesDal(_config);
             LoginBo loginBo = new LoginBo(_config);
 
@@ -227,6 +236,8 @@ namespace NetCoreConcepts.Bo
         }
         public List<PaisesModel>? GetExcelPaises(UsuarioRequest request)
         {
+            request = utils.CleanObject(request);
+
             PaisesDal paisesDal = new PaisesDal(_config);
             LoginBo loginBo = new LoginBo(_config);
 

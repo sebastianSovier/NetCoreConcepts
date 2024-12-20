@@ -23,7 +23,7 @@ namespace Negocio
         {
             UsuarioModels usuario = new UsuarioModels();
             UsuarioDal usuarioDal = new UsuarioDal(_config);
-            usuario = usuarioDal.ObtenerUsuario(userName);
+            usuario = usuarioDal.ObtenerUsuario(util.CleanObject(userName));
             return usuario;
 
         }
@@ -39,7 +39,7 @@ namespace Negocio
         {
             UsuarioDal usuarioDal = new UsuarioDal(_config);
 
-            usuarioDal.CrearUsuario(usuarioRequest);
+            usuarioDal.CrearUsuario(util.CleanObject(usuarioRequest));
 
 
         }
