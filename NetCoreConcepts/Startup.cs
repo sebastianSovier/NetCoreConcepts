@@ -1,18 +1,22 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
+using Serilog;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+
 
 namespace NetCoreConcepts
 {
@@ -32,7 +36,14 @@ namespace NetCoreConcepts
 
             // Configuración de CORS
             ConfigureCors(services);
-
+            Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()     // Log a la consola
+    .WriteTo.File("logs/myapp.txt", rollingInterval: RollingInterval.Day) // Log a archivo
+    .CreateLogger();
+            services.AddLogging(builder =>
+            {
+                builder.AddSerilog();
+            });
             services.Configure<FormOptions>(options =>
             {
                 options.MultipartBodyLengthLimit = long.MaxValue;
@@ -66,7 +77,10 @@ namespace NetCoreConcepts
                     ValidIssuer = Configuration["JwtIssuer"],
                     ValidAudience = Configuration["JwtIssuer"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])),
-                    ClockSkew = TimeSpan.Zero
+                    ClockSkew = TimeSpan.Zero,
+                    ValidateLifetime = true,  // Validar la expiración del token
+                    ValidateIssuer = true,
+                    ValidateAudience = true
                 };
                 cfg.Events = new JwtBearerEvents
                 {
@@ -90,7 +104,7 @@ namespace NetCoreConcepts
 
         }
 
-        public static Task ValidateTokenAsync(MessageReceivedContext context)
+        private static Task ValidateTokenAsync(MessageReceivedContext context)
         {
             try
             {
@@ -118,12 +132,42 @@ namespace NetCoreConcepts
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.Use(async (context, next) =>
+            {
+                // Adding headers directly to the response
+                context.Response.OnStarting(() =>
+                {
+                    context.Response.Headers["Cache-Control"] = "max-age=604800";
+                    context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+                    context.Response.Headers["X-Frame-Options"] = "DENY";
+                    context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
+                    context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+                    return Task.CompletedTask;
+                });
+
+                await next();
+            });
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "NetCoreConcepts v1"));
             }
+            else
+            {
+                app.UseHsts();
+            }
+            app.UseMiddleware<SqlInjectionCleaningMiddleware>();
+            app.UseExceptionHandler(config =>
+            {
+                config.Run(async context =>
+                {
+                    context.Response.StatusCode = 500;
+                    context.Response.ContentType = "application/json";
+                    var result = JsonConvert.SerializeObject(new { error = "An unexpected error occurred." });
+                    await context.Response.WriteAsync(result);
+                });
+            });
 
             app.UseHttpsRedirection();
             app.UseRouting();
